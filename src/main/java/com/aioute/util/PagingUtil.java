@@ -1,12 +1,10 @@
 package com.aioute.util;
 
-import org.apache.log4j.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
 public class PagingUtil {
 
-	private static Logger logger = Logger.getLogger(PagingUtil.class);
+	//private static Logger logger = Logger.getLogger(PagingUtil.class);
 
 	public static int getCount(HttpServletRequest req) {
 		String count = req.getParameter("count");
@@ -17,7 +15,7 @@ public class PagingUtil {
 				numCount = 0;
 			}
 		} catch (Exception e) {
-			logger.info("没有count参数或格式错误");
+			//logger.info("没有count参数或格式错误");
 		}
 		return numCount;
 	}
@@ -31,7 +29,7 @@ public class PagingUtil {
 				numPage = 0;
 			}
 		} catch (Exception e) {
-			logger.info("没有page参数或格式错误");
+			//logger.info("没有page参数或格式错误");
 		}
 		return numPage;
 	}
@@ -45,7 +43,7 @@ public class PagingUtil {
 				numPageSize = 10;
 			}
 		} catch (Exception e) {
-			logger.info("没有pageSize参数或格式错误");
+			//logger.info("没有pageSize参数或格式错误");
 		}
 		return numPageSize;
 	}

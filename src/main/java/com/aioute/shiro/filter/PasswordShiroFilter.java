@@ -6,7 +6,6 @@
 package com.aioute.shiro.filter;
 
 import com.aioute.shiro.token.UsernamePasswordToken;
-import org.apache.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class PasswordShiroFilter extends FormAuthenticationFilter {
 
-	private Logger logger = Logger.getLogger(PasswordShiroFilter.class);
+	//private Logger logger = Logger.getLogger(PasswordShiroFilter.class);
 
 	private static final String DEFAULT_CAPTCHA_PARAM = "validateCode";
 	public static final String DEFAULT_MOBILE_PARAM = "mobileLogin";
@@ -75,7 +74,7 @@ public class PasswordShiroFilter extends FormAuthenticationFilter {
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request,
 			ServletResponse response) {
-		logger.info("onLoginFailure" + e.getMessage());
+		//logger.info("onLoginFailure" + e.getMessage());
 		return super.onLoginFailure(token, e, request, response);
 	}
 

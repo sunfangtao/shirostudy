@@ -7,26 +7,22 @@
 package com.aioute.shiro.realm;
 
 import com.aioute.shiro.password.PasswordHelper;
-import org.apache.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.Session;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.cas.CasRealm;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class PasswordShiroRealm extends AuthorizingRealm {
+public class PasswordShiroRealm extends CasRealm {
 
-    private Logger logger = Logger.getLogger("PasswordShiroRealm");
+    //private Logger logger = Logger.getLogger("PasswordShiroRealm");
 
     @Autowired
     private SessionManager sessionManager;
@@ -36,53 +32,35 @@ public class PasswordShiroRealm extends AuthorizingRealm {
     @Autowired
     private PasswordHelper passwordHelper;
 
+    protected final Map<String, SimpleAuthorizationInfo> roles = new ConcurrentHashMap<String, SimpleAuthorizationInfo>();
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        // TODO Auto-generated method stub
-
         // 登录成功授权操作
-        // Principal principal = (Principal)
-        // getAvailablePrincipal(principalCollection);
+        String account = (String) principalCollection.getPrimaryPrincipal();
+        SimpleAuthorizationInfo authorizationInfo = null;
+//        if (authorizationInfo == null) {
+//            authorizationInfo = new SimpleAuthorizationInfo();
+//            List<String> permissions = roleService.getPermissions(account);
+//            authorizationInfo.addStringPermissions(permissions);
+//            authorizationInfo.addRoles(roleService.getRoles(account));
+//            roles.put(account, authorizationInfo);
+//        }
 
-        return null;
+        return authorizationInfo;
     }
 
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
-            throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        logger.info("");
-        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
-        String username = token.getUsername();
+        AuthenticationInfo authc = super.doGetAuthenticationInfo(authenticationToken);
 
-        if (sessionManager instanceof DefaultWebSessionManager) {
-            DefaultWebSessionManager defaultWebSessionManager = (DefaultWebSessionManager) sessionManager;
+//        String account = (String) authc.getPrincipals().getPrimaryPrincipal();
+//
+//        User user = userService.getUserByAccount(account);
+//
+//        SecurityUtils.getSubject().getSession().setAttribute("user", user);
 
-            SessionDAO sessionDAO = defaultWebSessionManager.getSessionDAO();
-            Collection<Session> sessions = sessionDAO.getActiveSessions();
-
-            for (Session session : sessions) {
-                // 清除该用户以前登录时保存的session
-                if (token.getPrincipal().equals(
-                        String.valueOf(session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY)))) {
-                    sessionDAO.delete(session);
-                    logger.info("已在线的用户：" + token.getPrincipal() + "被踢出");
-                }
-            }
-        }
-
-        if (username != null && !"".equals(username.trim())) {
-//            UserVO user = userDao.obtainUserInfoByPhone(username);
-//            if (user != null) {
-//                String password = user.getPassword();
-//                if(password!=null) {
-//                    return new SimpleAuthenticationInfo(username, password.substring(32), ByteSource.Util.bytes(user
-//                            .getPassword().substring(0, 32)), getName());
-//                }else {
-//                    return null;
-//                }
-//            }
-        }
-        return null;
+        return authc;
     }
 }

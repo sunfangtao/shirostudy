@@ -3,7 +3,6 @@ package com.aioute.controller;
 import com.aioute.shiro.filter.PasswordShiroFilter;
 import com.aioute.util.CloudError;
 import com.aioute.util.SendJSONUtil;
-import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("loginController")
 public class LoginController {
 
-    private Logger logger = Logger.getLogger(LoginController.class);
+    //private Logger logger = Logger.getLogger(LoginController.class);
 
 //	@Resource
 //	private UserDao userDao;
@@ -32,7 +31,7 @@ public class LoginController {
         try {
 			String returnString = null;
             String errorClassName = (String) req.getAttribute(PasswordShiroFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
-            logger.info("login errorClassName=" + errorClassName);
+            //logger.info("login errorClassName=" + errorClassName);
 			if (errorClassName == null) {
 				// 成功
 				Subject subject = SecurityUtils.getSubject();
@@ -40,7 +39,7 @@ public class LoginController {
 
 				if (phone == null || phone.length() == 0) {
 					// 非法请求
-					logger.debug("用户请求未认证");
+					//logger.debug("用户请求未认证");
                     returnString = SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.NOTLOGIN.getValue(), "请先登录！");
 				} else {
 //					UserVO user = userDao.obtainUserInfoByPhone(phone);
@@ -54,11 +53,11 @@ public class LoginController {
 //						user.setPassword("******");
 //						jsonObject = SendJSONUtil.getNormalObject(user);
 //					}
-					logger.debug("用户开始登录 ：");
+					//logger.debug("用户开始登录 ：");
 				}
 			} else {
 				// 失败
-				logger.info("用户登录失败 " + errorClassName);
+				//logger.info("用户登录失败 " + errorClassName);
 //				if (errorClassName.contains("IncorrectCredentialsException")) {
 //					jsonObject = SendJSONUtil.getFailResultObject("", "密码错误！");
 //				} else if (errorClassName.contains("UnknownAccountException")) {
