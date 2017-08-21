@@ -55,9 +55,9 @@
 
     <bean id="casFilter" class="com.aioute.filter.MyCasFilter">
         <!-- 配置验证成功是的URL -->
-        <property name="successUrl" value="${shiro.successUrl}"/>
+        <property name="successUrl" value="index.jsp"/>
         <!-- 配置验证错误时的失败页面  -->
-        <property name="failureUrl" value="${shiro.errorUrl}"/>
+        <property name="failureUrl" value="error.jsp"/>
     </bean>
 
     <bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
@@ -81,7 +81,7 @@
         <!-- 认证通过后的默认角色 -->
         <!-- <property name="defaultRoles" value="ROLE_USER" /> -->
         <!-- cas服务端地址前缀 -->
-        <property name="casServerUrlPrefix" value="http://192.168.17.108:6080/cas/login"/>
+        <property name="casServerUrlPrefix" value="http://192.168.17.108:6080/cas"/>
         <!-- 应用服务地址，用来接收cas服务端票据 -->
         <property name="casService" value="http://10.10.29.249:8099/shiro-cas"/>
     </bean>

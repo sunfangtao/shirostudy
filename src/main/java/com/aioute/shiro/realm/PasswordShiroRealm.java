@@ -7,6 +7,7 @@
 package com.aioute.shiro.realm;
 
 import com.aioute.shiro.password.PasswordHelper;
+import org.apache.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -22,11 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PasswordShiroRealm extends CasRealm {
 
-    //private Logger logger = Logger.getLogger("PasswordShiroRealm");
+    private Logger logger = Logger.getLogger("PasswordShiroRealm");
 
     @Autowired
     private SessionManager sessionManager;
-//    @Resource
+    //    @Resource
 //    private UserDao userDao;
     @SuppressWarnings("unused")
     @Autowired
@@ -50,11 +51,13 @@ public class PasswordShiroRealm extends CasRealm {
         return authorizationInfo;
     }
 
+    // 认证成功回调
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 
         AuthenticationInfo authc = super.doGetAuthenticationInfo(authenticationToken);
 
+        logger.info((String) authc.getPrincipals().getPrimaryPrincipal());
 //        String account = (String) authc.getPrincipals().getPrimaryPrincipal();
 //
 //        User user = userService.getUserByAccount(account);

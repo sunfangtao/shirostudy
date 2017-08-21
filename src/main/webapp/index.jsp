@@ -10,7 +10,7 @@
 <h1>hello 这里是应用程序2</h1>
 
 
-<a href="http://localhost:8099/shiro/shiro-cas">applicationTwo</a>
+<a href="http://localhost:8099/loginController/login">applicationTwo</a>
 <br/>
 <br/>
 

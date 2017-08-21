@@ -4,6 +4,7 @@ import com.aioute.shiro.filter.PasswordShiroFilter;
 import com.aioute.util.CloudError;
 import com.aioute.util.SendJSONUtil;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,22 +27,23 @@ public class LoginController {
      * @param req
      * @param res
      */
+    @RequiresPermissions("sss")
     @RequestMapping("login")
     public void login(HttpServletRequest req, HttpServletResponse res) {
         try {
-			String returnString = null;
+            String returnString = null;
             String errorClassName = (String) req.getAttribute(PasswordShiroFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
             //logger.info("login errorClassName=" + errorClassName);
-			if (errorClassName == null) {
-				// 成功
-				Subject subject = SecurityUtils.getSubject();
-				String phone = (String) subject.getPrincipal();
+            if (errorClassName == null) {
+                // 成功
+                Subject subject = SecurityUtils.getSubject();
+                String phone = (String) subject.getPrincipal();
 
-				if (phone == null || phone.length() == 0) {
-					// 非法请求
-					//logger.debug("用户请求未认证");
+                if (phone == null || phone.length() == 0) {
+                    // 非法请求
+                    //logger.debug("用户请求未认证");
                     returnString = SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.NOTLOGIN.getValue(), "请先登录！");
-				} else {
+                } else {
 //					UserVO user = userDao.obtainUserInfoByPhone(phone);
 //					user.setLoginTime(new SimpleDateFormat("yy-MM-dd HH:mm:ss").format(new Date()));
 //
@@ -53,11 +55,11 @@ public class LoginController {
 //						user.setPassword("******");
 //						jsonObject = SendJSONUtil.getNormalObject(user);
 //					}
-					//logger.debug("用户开始登录 ：");
-				}
-			} else {
-				// 失败
-				//logger.info("用户登录失败 " + errorClassName);
+                    //logger.debug("用户开始登录 ：");
+                }
+            } else {
+                // 失败
+                //logger.info("用户登录失败 " + errorClassName);
 //				if (errorClassName.contains("IncorrectCredentialsException")) {
 //					jsonObject = SendJSONUtil.getFailResultObject("", "密码错误！");
 //				} else if (errorClassName.contains("UnknownAccountException")) {
@@ -65,7 +67,7 @@ public class LoginController {
 //				} else {
 //					jsonObject = SendJSONUtil.getFailResultObject("", "登录失败！");
 //				}
-			}
+            }
             res.getWriter().write(returnString);
 
         } catch (Exception e) {
