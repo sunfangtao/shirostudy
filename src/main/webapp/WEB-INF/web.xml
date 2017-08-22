@@ -60,7 +60,11 @@
     <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:applicationContext.xml,classpath:shiro/shiro-config.xml</param-value>
+        <param-value>
+            classpath:applicationContext.xml,
+            classpath:spring/spring-servlet.xml,
+            classpath:shiro/shiro-config.xml
+        </param-value>
     </context-param>
 
     <!-- Spring配置 -->
@@ -86,7 +90,6 @@
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
-        <!--<url-pattern>*.do</url-pattern>-->
     </servlet-mapping>
 
     <!--
@@ -97,4 +100,4 @@
                 <include-prelude>/common/lib.jsp</include-prelude>
             </jsp-property-group>
         </jsp-config>-->
-    </web-app>
+</web-app>

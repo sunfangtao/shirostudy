@@ -29,7 +29,6 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd http://www.springfr
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
     <bean id="defaultViewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:order="1">

@@ -50,9 +50,6 @@
 
     </bean>
 
-    <bean id="passwordShiroFilter" class="com.aioute.shiro.filter.PasswordShiroFilter"/>
-    <!-- <bean id="kickoutSessionFilter" class="com.aioute.shiro.filter.KickoutSessionFilter"/> -->
-
     <bean id="casFilter" class="com.aioute.filter.MyCasFilter">
         <!-- 配置验证成功是的URL -->
         <property name="successUrl" value="index.jsp"/>
@@ -72,8 +69,8 @@
         <!-- session 管理器 -->
         <property name="sessionManager" ref="sessionManager"/>
         <!--<property name="rememberMeManager" ref="rememberMeManager"/>-->
-        <!-- 缓存管理器
-        <property name="cacheManager" ref="shiroCacheManager"/>-->
+        <!-- 缓存管理器-->
+        <property name="cacheManager" ref="shiroCacheManager"/>
     </bean>
 
     <!--realm -->
@@ -84,6 +81,11 @@
         <property name="casServerUrlPrefix" value="http://192.168.17.108:6080/cas"/>
         <!-- 应用服务地址，用来接收cas服务端票据 -->
         <property name="casService" value="http://10.10.29.249:8099/shiro-cas"/>
+        <property name="cachingEnabled" value="true" />
+        <property name="authenticationCachingEnabled" value="true" />
+        <property name="authenticationCacheName" value="authenticationCache" />
+        <property name="authorizationCachingEnabled" value="true" />
+        <property name="authorizationCacheName" value="authorizationCache" />
     </bean>
 
     <bean id="casSubjectFactory" class="org.apache.shiro.cas.CasSubjectFactory"></bean>
@@ -120,6 +122,12 @@
         <property name="interval" value="3600000"/>
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
+
+    <!-- 缓存管理器 使用Ehcache实现 -->
+    <bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:cache/ehcache.xml" />
+    </bean>
+
     <!-- 记住登录 -->
     <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
         <property name="cipherKey"
@@ -133,6 +141,4 @@
         <property name="maxAge" value="2592000"/><!-- 30天 -->
     </bean>
 
-    <!-- 密码加密 -->
-    <bean id="passwordHelper" class="com.aioute.shiro.password.PasswordHelper"/>
 </beans>

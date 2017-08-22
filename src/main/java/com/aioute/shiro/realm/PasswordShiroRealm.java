@@ -6,48 +6,50 @@
  */
 package com.aioute.shiro.realm;
 
-import com.aioute.shiro.password.PasswordHelper;
-import org.apache.log4j.Logger;
+import com.aioute.model.UserModel;
+import com.aioute.service.RolePermissionService;
+import com.aioute.service.UserService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cas.CasRealm;
-import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PasswordShiroRealm extends CasRealm {
 
-    private Logger logger = Logger.getLogger("PasswordShiroRealm");
+    @Resource
+    private RolePermissionService rolePermissionService;
+    @Resource
+    private UserService userService;
 
-    @Autowired
-    private SessionManager sessionManager;
-    //    @Resource
-//    private UserDao userDao;
-    @SuppressWarnings("unused")
-    @Autowired
-    private PasswordHelper passwordHelper;
-
-    protected final Map<String, SimpleAuthorizationInfo> roles = new ConcurrentHashMap<String, SimpleAuthorizationInfo>();
+    protected final Map<String, SimpleAuthorizationInfo> authorizationMap = new ConcurrentHashMap<String, SimpleAuthorizationInfo>();
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         // 登录成功授权操作
         String account = (String) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo authorizationInfo = null;
-//        if (authorizationInfo == null) {
-//            authorizationInfo = new SimpleAuthorizationInfo();
-//            List<String> permissions = roleService.getPermissions(account);
-//            authorizationInfo.addStringPermissions(permissions);
-//            authorizationInfo.addRoles(roleService.getRoles(account));
-//            roles.put(account, authorizationInfo);
-//        }
-
+        if (authorizationInfo == null) {
+            authorizationInfo = new SimpleAuthorizationInfo();
+            List<String> permissions = rolePermissionService.getPermissions(account);
+            if (permissions != null) {
+                authorizationInfo.addStringPermissions(permissions);
+            }
+            List<String> roles = rolePermissionService.getRoles(account);
+            if (roles != null) {
+                authorizationInfo.addRoles(rolePermissionService.getRoles(account));
+            }
+            authorizationMap.put(account, authorizationInfo);
+        }
+        authorizationInfo.addStringPermission("sss");
         return authorizationInfo;
     }
 
@@ -57,12 +59,9 @@ public class PasswordShiroRealm extends CasRealm {
 
         AuthenticationInfo authc = super.doGetAuthenticationInfo(authenticationToken);
 
-        logger.info((String) authc.getPrincipals().getPrimaryPrincipal());
-//        String account = (String) authc.getPrincipals().getPrimaryPrincipal();
-//
-//        User user = userService.getUserByAccount(account);
-//
-//        SecurityUtils.getSubject().getSession().setAttribute("user", user);
+        String account = (String) authc.getPrincipals().getPrimaryPrincipal();
+        UserModel user = userService.getUserByAccount(account);
+        SecurityUtils.getSubject().getSession().setAttribute("user", user);
 
         return authc;
     }

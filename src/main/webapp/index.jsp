@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +7,6 @@
 </head>
 <body>
 <h1>hello 这里是应用程序2</h1>
-
 
 <a href="http://localhost:8099/loginController/login">applicationTwo</a>
 <br/>
