@@ -9,11 +9,9 @@
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
         <!-- 如果没有认证将要跳转的登陆地址，http可访问的url，如果不在表单认证过虑器FormAuthenticationFilter中指定此地址就为身份认证地址 -->
-        <property name="loginUrl" value="http://192.168.17.108:6080/cas/login?service=http://10.10.29.249:8099/shiro-cas"/>
-        <property name="successUrl" value="/loginController/login"/>
+        <property name="loginUrl" value="${shiro.loginUrl}"/>
         <!-- 没有权限跳转的地址 -->
-        <property name="unauthorizedUrl" value="/index.jsp"/>
-
+        <property name="unauthorizedUrl" value="/error.jsp" />
         <!-- 声明自定义的过滤器 -->
         <property name="filters">
             <map>
@@ -78,9 +76,9 @@
         <!-- 认证通过后的默认角色 -->
         <!-- <property name="defaultRoles" value="ROLE_USER" /> -->
         <!-- cas服务端地址前缀 -->
-        <property name="casServerUrlPrefix" value="http://192.168.17.108:6080/cas"/>
+        <property name="casServerUrlPrefix" value="${shiro.cas.serverUrlPrefix}"/>
         <!-- 应用服务地址，用来接收cas服务端票据 -->
-        <property name="casService" value="http://10.10.29.249:8099/shiro-cas"/>
+        <property name="casService" value="${shiro.cas.service}"/>
         <property name="cachingEnabled" value="true" />
         <property name="authenticationCachingEnabled" value="true" />
         <property name="authenticationCacheName" value="authenticationCache" />

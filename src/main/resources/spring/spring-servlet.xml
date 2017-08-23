@@ -46,4 +46,16 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd http://www.springfr
         <property name="maxInMemorySize" value="40960"/>
     </bean>
 
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">
+                    /unauthorized
+                </prop>
+                <prop key="org.apache.shiro.authz.UnauthenticatedException">
+                    /unauthenticated
+                </prop>
+            </props>
+        </property>
+    </bean>
 </beans>

@@ -15,9 +15,9 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>classpath:log4j/log4j.properties</param-value>
     </context-param>
-    <!--<listener>
+    <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>-->
+    </listener>
 
     <filter>
         <filter-name>SpringEncodingFilter</filter-name>
