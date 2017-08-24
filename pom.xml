@@ -15,6 +15,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.sft</groupId>
+            <artifactId>shiro-sso</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
         <dependency>
             <groupId>org.springframework</groupId>

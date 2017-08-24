@@ -6,6 +6,6 @@
     <title>首页</title>
 </head>
 <body>
-<h1>hello 这里是INDEX jsp</h1>
+<h1>hello 这里是ERROR jsp</h1>
 </body>
 </html>

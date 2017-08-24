@@ -2,6 +2,7 @@ package com.aioute.controller;
 
 import com.aioute.controller.base.BaseController;
 import com.aioute.util.HttpClient;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class LoginController extends BaseController {
     @RequiresPermissions("sss")
     @RequestMapping("login")
     public void login(HttpServletRequest req, HttpServletResponse res) {
+        String uername = (String) SecurityUtils.getSubject().getPrincipal();
         new HttpClient(req, res).send("http://www.baidu.com");
     }
 

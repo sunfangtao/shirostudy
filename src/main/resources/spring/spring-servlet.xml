@@ -23,12 +23,6 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd http://www.springfr
     <!-- 静态资源映射 -->
     <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
 
-    <aop:config proxy-target-class="true"/>
-
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="securityManager" ref="securityManager"/>
-    </bean>
-
     <bean id="defaultViewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:order="1">
@@ -46,16 +40,4 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd http://www.springfr
         <property name="maxInMemorySize" value="40960"/>
     </bean>
 
-    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="org.apache.shiro.authz.UnauthorizedException">
-                    /unauthorized
-                </prop>
-                <prop key="org.apache.shiro.authz.UnauthenticatedException">
-                    /unauthenticated
-                </prop>
-            </props>
-        </property>
-    </bean>
 </beans>
