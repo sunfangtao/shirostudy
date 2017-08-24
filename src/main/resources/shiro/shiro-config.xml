@@ -11,7 +11,7 @@
         <!-- 如果没有认证将要跳转的登陆地址，http可访问的url，如果不在表单认证过虑器FormAuthenticationFilter中指定此地址就为身份认证地址 -->
         <property name="loginUrl" value="${shiro.loginUrl}"/>
         <!-- 没有权限跳转的地址 -->
-        <property name="unauthorizedUrl" value="/error.jsp" />
+        <property name="unauthorizedUrl" value="/error.jsp"/>
         <!-- 声明自定义的过滤器 -->
         <property name="filters">
             <map>
@@ -79,11 +79,11 @@
         <property name="casServerUrlPrefix" value="${shiro.cas.serverUrlPrefix}"/>
         <!-- 应用服务地址，用来接收cas服务端票据 -->
         <property name="casService" value="${shiro.cas.service}"/>
-        <property name="cachingEnabled" value="true" />
-        <property name="authenticationCachingEnabled" value="true" />
-        <property name="authenticationCacheName" value="authenticationCache" />
-        <property name="authorizationCachingEnabled" value="true" />
-        <property name="authorizationCacheName" value="authorizationCache" />
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="true"/>
+        <property name="authenticationCacheName" value="authenticationCache"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="authorizationCache"/>
     </bean>
 
     <bean id="casSubjectFactory" class="org.apache.shiro.cas.CasSubjectFactory"></bean>
@@ -123,7 +123,7 @@
 
     <!-- 缓存管理器 使用Ehcache实现 -->
     <bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <property name="cacheManagerConfigFile" value="classpath:cache/ehcache.xml" />
+        <property name="cacheManagerConfigFile" value="classpath:cache/ehcache.xml"/>
     </bean>
 
     <!-- 记住登录 -->
