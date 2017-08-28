@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BaseController {
+public abstract class BaseController {
 
     /**
      * 登录认证异常
