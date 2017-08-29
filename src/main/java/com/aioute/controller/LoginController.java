@@ -56,6 +56,7 @@ public class LoginController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("code", "-998");
         map.put("message", "无权限");
+
         writeJson(map, res);
     }
 }
