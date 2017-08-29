@@ -13,6 +13,9 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 注解生效
+ */
 public abstract class BaseController {
 
     /**
@@ -56,7 +59,7 @@ public abstract class BaseController {
      * @author SHANHY
      * @create 2017年4月4日
      */
-    private void writeJson(Map<String, Object> map, HttpServletResponse response) {
+    protected void writeJson(Map<String, Object> map, HttpServletResponse response) {
         PrintWriter out = null;
         try {
             response.setCharacterEncoding("UTF-8");
