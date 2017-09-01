@@ -12,6 +12,21 @@
         <param-value>shiro.root</param-value>
     </context-param>
 
+    <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:applicationContext.xml,
+            classpath:spring/spring-servlet.xml,
+            classpath:shiro/shiro-config.xml
+        </param-value>
+    </context-param>
+
+    <!-- Spring配置 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
     <listener>
         <listener-class>com.aioute.log4j.log4jListener</listener-class>
     </listener>
@@ -35,6 +50,10 @@
             <param-name>encoding</param-name>
             <param-value>UTF-8</param-value>
         </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>SpringEncodingFilter</filter-name>
@@ -53,21 +72,6 @@
         <filter-name>shiroFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath:applicationContext.xml,
-            classpath:spring/spring-servlet.xml,
-            classpath:shiro/shiro-config.xml
-        </param-value>
-    </context-param>
-
-    <!-- Spring配置 -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 
     <!-- Spring MVC配置 -->
     <servlet>
@@ -89,12 +93,11 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <!--
-        <jsp-config>
-            <jsp-property-group>
-                <description>every jsp page use the jstl tag</description>
-                <url-pattern>*.jsp</url-pattern>
-                <include-prelude>/common/lib.jsp</include-prelude>
-            </jsp-property-group>
-        </jsp-config>-->
+    <jsp-config>
+        <jsp-property-group>
+            <description>every jsp page use the jstl tag</description>
+            <url-pattern>*.jsp</url-pattern>
+            <include-prelude>/common/lib.jsp</include-prelude>
+        </jsp-property-group>
+    </jsp-config>
 </web-app>
