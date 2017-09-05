@@ -51,13 +51,13 @@
             limits: [10],
             layout: ['prev', 'page', 'next', 'limit', 'skip', 'count'],
             //curr: location.hash.replace('#!fenye=', ''), // 获取hash值为fenye的当前页
-            //hash: 'fenye', //自定义hash值
+            //hash: 'fenye', // 自定义hash值
             theme: '#1E9FFF',
-            jump: function (obj, first) {//点击页码出发的事件
-                if (first != true) {//是否首次进入页面
-                    var currentPage = obj.curr;//获取点击的页码
+            jump: function (obj, first) {// 点击页码出发的事件
+                if (first != true) {// 是否首次进入页面
+                    var currentPage = obj.curr;// 获取点击的页码
                     console.info("currentPage=" + currentPage + " first=" + first);
-                    //window.location.href = "../invest/toLoanBot.htm?page=" + currentPage;
+                    // window.location.href = "../invest/toLoanBot.htm?page=" + currentPage;
                 }
             }
         });

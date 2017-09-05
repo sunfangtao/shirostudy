@@ -6,7 +6,9 @@ import com.sft.model.UserModel;
 import com.sft.service.RolePermissionService;
 import com.sft.service.UserService;
 import com.sft.util.CloudError;
-import com.sft.util.SendJSONUtil;
+import com.sft.util.PagingUtil;
+import com.sft.util.SendAppJSONUtil;
+import com.sft.util.SendPlatJSONUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -47,18 +49,31 @@ public class RolePermissionController {
             role.setName(name);
         } else {
             // 必须有角色名称
-            return SendJSONUtil.getRequireParamsMissingObject("必须填写角色名称!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("必须填写角色名称!");
         }
         role.setCreate_by((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
         boolean result = rolePermissionService.addRole(role);
         if (result) {
             // 操作成功
-            returnStr = SendJSONUtil.getNormalString("创建成功!");
+            returnStr = SendAppJSONUtil.getNormalString("创建成功!");
         } else {
             // 角色名称不能重复
-            returnStr = SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.REPEAT.getValue(), "角色名称不能重复!");
+            returnStr = SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.REPEAT.getValue(), "角色名称不能重复!");
         }
         return returnStr;
+    }
+
+    /**
+     * 获取所有角色
+     */
+    @ResponseBody
+    @RequestMapping("roles")
+    public String roles(HttpServletRequest req) {
+        int page = PagingUtil.getPage(req);
+        int pageSize = PagingUtil.getPageSize(req);
+        List<Role> roleList = rolePermissionService.getRoles(page, pageSize);
+        int count = rolePermissionService.getRoleCount();
+        return SendPlatJSONUtil.getPageJsonString(0, "", count, roleList);
     }
 
     /**
@@ -81,13 +96,13 @@ public class RolePermissionController {
             UserModel userModel = new UserModel();
             userModel.setId(userId);
             if (!subUserList.contains(userModel)) {
-                return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
+                return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
             }
         }
 
         List<Role> roleList = rolePermissionService.getRoles(userId);
 
-        return SendJSONUtil.getNormalString(roleList);
+        return SendAppJSONUtil.getNormalString(roleList);
     }
 
     /**
@@ -116,14 +131,15 @@ public class RolePermissionController {
                 role.setDel_flag(1);
             }
             if (rolePermissionService.updateRole(role)) {
-                return SendJSONUtil.getNormalString("更新成功!");
+                return SendAppJSONUtil.getNormalString("更新成功!");
             } else {
                 // 角色名称不能重复
-                return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.REPEAT.getValue(), "角色名称不能重复!");
+                String sr = SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.REPEAT.getValue(), "角色名称不能重复!");
+                return sr;
             }
         } else {
             // 必须有角色编号
-            return SendJSONUtil.getRequireParamsMissingObject("缺少角色编号!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("缺少角色编号!");
         }
     }
 
@@ -147,19 +163,19 @@ public class RolePermissionController {
                 if (subUserList.contains(userModel)) {
                     List<String> roleIdList = Arrays.asList(roleIds.split("@"));
                     if (rolePermissionService.updateUserRoles(userId, roleIdList, loginUserId)) {
-                        return SendJSONUtil.getNormalString("更新成功!");
+                        return SendAppJSONUtil.getNormalString("更新成功!");
                     } else {
-                        return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
+                        return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
                     }
                 } else {
-                    return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
+                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
                 }
             } else {
-                return SendJSONUtil.getRequireParamsMissingObject("缺少用户信息!");
+                return SendAppJSONUtil.getRequireParamsMissingObject("缺少用户信息!");
             }
         } else {
             // 必须有角色编号
-            return SendJSONUtil.getRequireParamsMissingObject("请选择修改的角色!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("请选择修改的角色!");
         }
     }
 
@@ -178,16 +194,16 @@ public class RolePermissionController {
             if (StringUtils.hasText(roleId)) {
                 List<String> permissionStrList = Arrays.asList(permissionIds.split("@"));
                 if (rolePermissionService.updateRolePermission(roleId, permissionStrList)) {
-                    return SendJSONUtil.getNormalString("更新成功!");
+                    return SendAppJSONUtil.getNormalString("更新成功!");
                 } else {
-                    return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
+                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
                 }
             } else {
-                return SendJSONUtil.getRequireParamsMissingObject("缺少角色信息!");
+                return SendAppJSONUtil.getRequireParamsMissingObject("缺少角色信息!");
             }
         } else {
             // 必须有权限列表
-            return SendJSONUtil.getRequireParamsMissingObject("请选择修改的权限!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("请选择修改的权限!");
         }
     }
 
@@ -213,16 +229,16 @@ public class RolePermissionController {
                 permission.setRemarks(remarks);
 
                 if (rolePermissionService.addPermission(permission)) {
-                    return SendJSONUtil.getNormalString("添加成功!");
+                    return SendAppJSONUtil.getNormalString("添加成功!");
                 } else {
-                    return SendJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
+                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
                 }
             } else {
-                return SendJSONUtil.getRequireParamsMissingObject("请填写权限别名!");
+                return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限别名!");
             }
         } else {
             // 必须有模块分类
-            return SendJSONUtil.getRequireParamsMissingObject("请选择所属模块!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("请选择所属模块!");
         }
     }
 
@@ -239,10 +255,10 @@ public class RolePermissionController {
 
         if (StringUtils.hasText(roleId)) {
             List<Permission> permissionList = rolePermissionService.getRolePermissionsList(roleId);
-            return SendJSONUtil.getNormalString(permissionList);
+            return SendAppJSONUtil.getNormalString(permissionList);
         } else {
             // 必须有角色信息
-            return SendJSONUtil.getRequireParamsMissingObject("请选择角色!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("请选择角色!");
         }
     }
 
@@ -256,7 +272,7 @@ public class RolePermissionController {
     @RequestMapping("getResourcePermissions")
     public String getResourcePermissions(HttpServletRequest req, HttpServletResponse res) {
         List<Permission> permissionList = rolePermissionService.getUrlPermissions();
-        return SendJSONUtil.getNormalString(permissionList);
+        return SendAppJSONUtil.getNormalString(permissionList);
     }
 
 }
