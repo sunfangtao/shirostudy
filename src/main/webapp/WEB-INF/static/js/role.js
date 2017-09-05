@@ -5,11 +5,6 @@ layui.use(['table', 'layer'], function () {
             deleteRole(obj);
         } else { // 编辑
             editRole(obj);
-            // 同步更新缓存对应的值
-            obj.update({
-                name: '123'
-                , title: 'xxx'
-            });
         }
     });
 });
@@ -66,6 +61,12 @@ function editRole(obj) {
                     }
                     layer.msg(data.message, {time: 800});
                     layer.close(index);
+                    // 同步更新缓存对应的值
+                    obj.update({
+                        name: $("#name").val(),
+                        remarks: $("#remarks").val(),
+                        del_flag: $("#del_flag").checked ? 1 : 0
+                    });
                 },
                 error: function (request) {
                     layer.msg("修改失败!", {time: 1500});
