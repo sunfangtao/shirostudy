@@ -38,12 +38,15 @@ public class RolePermissionController {
      */
     @ResponseBody
     @RequestMapping("addRole")
-    public String addRole(String name, String remarks) {
+    public String addRole(String name, String remarks, String del_flag) {
         String returnStr = "";
         Role role = new Role();
 
         if (StringUtils.hasText(remarks)) {
             role.setRemarks(remarks);
+        }
+        if (StringUtils.hasText(del_flag) && !del_flag.equals("0")) {
+            role.setDel_flag(1);
         }
         if (StringUtils.hasText(name)) {
             role.setName(name);

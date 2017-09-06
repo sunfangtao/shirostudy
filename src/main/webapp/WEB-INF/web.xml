@@ -93,11 +93,11 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <jsp-config>
-        <jsp-property-group>
-            <description>every jsp page use the jstl tag</description>
-            <url-pattern>*.jsp</url-pattern>
-            <include-prelude>/common/lib.jsp</include-prelude>
-        </jsp-property-group>
-    </jsp-config>
+    <!--<jsp-config>-->
+        <!--<jsp-property-group>-->
+            <!--<description>every jsp page use the jstl tag</description>-->
+            <!--<url-pattern>*.jsp</url-pattern>-->
+            <!--<page-encoding>UTF8</page-encoding>-->
+        <!--</jsp-property-group>-->
+    <!--</jsp-config>-->
 </web-app>

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50717
 File Encoding         : 65001
 
-Date: 2017-08-28 17:36:58
+Date: 2017-09-06 18:30:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,8 +19,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission` (
-  `id` varchar(64) NOT NULL COMMENT '编号',
-  `server_id` varchar(64) NOT NULL COMMENT '业务子服务编号',
+  `module_id` varchar(64) NOT NULL COMMENT '业务子服务模块编号',
   `name` varchar(20) NOT NULL COMMENT '别名',
   `permission` varchar(50) NOT NULL COMMENT '权限标识',
   `create_by` varchar(64) NOT NULL COMMENT '创建者',
@@ -29,29 +28,109 @@ CREATE TABLE `permission` (
   `update_date` datetime DEFAULT NULL COMMENT '更新时间',
   `remarks` varchar(200) DEFAULT NULL COMMENT '备注信息',
   `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `id` varchar(64) NOT NULL COMMENT '编号',
+  `url` varchar(200) DEFAULT NULL COMMENT '链接地址',
+  `type` varchar(50) DEFAULT NULL COMMENT '链接映射标识',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `permission` (`permission`)
+  UNIQUE KEY `permission` (`permission`),
+  UNIQUE KEY `type` (`type`),
+  UNIQUE KEY `url` (`url`,`module_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限';
 
 -- ----------------------------
 -- Records of permission
 -- ----------------------------
-INSERT INTO permission VALUES ('24f7eeec-6701-4d05-b75b-07f351c57a19', '1', '删除', 'wwwe', '111', '2017-08-25 17:48:06', null, null, null, '0');
-INSERT INTO permission VALUES ('73b748e4-d82d-496e-a69a-baa05ebea322', '1', '添加', 'www', '111', '2017-08-25 17:48:06', null, null, null, '0');
-INSERT INTO permission VALUES ('b7ec6d88-ce25-4e72-adf0-a5b67f29ac1f', '1', '更新', 'wws', '111', '2017-08-25 17:48:05', null, null, null, '0');
 
 -- ----------------------------
--- Table structure for `plat_user`
+-- Table structure for `role`
 -- ----------------------------
-DROP TABLE IF EXISTS `plat_user`;
-CREATE TABLE `plat_user` (
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `id` varchar(64) NOT NULL COMMENT '编号',
+  `name` varchar(20) NOT NULL COMMENT '角色名称',
+  `create_by` varchar(64) NOT NULL COMMENT '创建者',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `remarks` varchar(200) DEFAULT NULL COMMENT '备注信息',
+  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
+
+-- ----------------------------
+-- Records of role
+-- ----------------------------
+INSERT INTO role VALUES ('56653077-06d9-42a6-a6c8-c6e748fa8d2b', '贝格超级管理员', '就不告诉你', '2017-09-01 15:50:28', '这是备注这是备注这是备注', '1');
+INSERT INTO role VALUES ('a97385e1-4562-4373-95de-2f56e4cdb530', '贝格二级管理员', '就不告诉你', '2017-09-06 14:31:38', '测试角色', '1');
+INSERT INTO role VALUES ('aaf01d7d-79b0-4ca4-8085-cac3f311b0a1', '贝格四级管理员', '就不告诉你', '2017-09-06 14:53:38', '还要测试', '1');
+INSERT INTO role VALUES ('c5b84517-95c1-4274-9a22-36c59bccf290', '贝格三级管理员', '就不告诉你', '2017-09-06 14:51:10', '再次测试', '1');
+
+-- ----------------------------
+-- Table structure for `role_permission`
+-- ----------------------------
+DROP TABLE IF EXISTS `role_permission`;
+CREATE TABLE `role_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `role_id` varchar(64) NOT NULL COMMENT '角色编号',
+  `permission_id` varchar(64) NOT NULL COMMENT '权限编号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `role_id` (`role_id`,`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色-权限';
+
+-- ----------------------------
+-- Records of role_permission
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `server_module`
+-- ----------------------------
+DROP TABLE IF EXISTS `server_module`;
+CREATE TABLE `server_module` (
+  `id` varchar(64) NOT NULL COMMENT '模块编号',
+  `server_id` varchar(64) NOT NULL COMMENT '子服务器编号',
+  `name` varchar(20) NOT NULL COMMENT '模块名称',
+  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标识',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`,`server_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='子服务器中的模块信息';
+
+-- ----------------------------
+-- Records of server_module
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `sub_server`
+-- ----------------------------
+DROP TABLE IF EXISTS `sub_server`;
+CREATE TABLE `sub_server` (
+  `id` varchar(64) NOT NULL COMMENT '编号',
+  `name` varchar(50) NOT NULL COMMENT '子服务器名称',
+  `create_by` varchar(64) NOT NULL COMMENT '创建者',
+  `create_date` datetime NOT NULL COMMENT '创建日期',
+  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `address` varchar(100) NOT NULL COMMENT '子服务器访问地址',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of sub_server
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `sys_user`
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user` (
   `id` varchar(64) NOT NULL DEFAULT '' COMMENT '编号',
+  `parent_id_set` text,
+  `parent_id` varchar(64) NOT NULL COMMENT '创建者编号',
   `login_name` varchar(40) NOT NULL COMMENT '登录名',
   `password` varchar(64) NOT NULL COMMENT '密码',
   `name` varchar(20) NOT NULL COMMENT '姓名',
-  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
   `phone` varchar(20) DEFAULT NULL COMMENT '电话',
-  `mobile` varchar(11) NOT NULL COMMENT '手机',
+  `latitude` double DEFAULT NULL COMMENT '纬度',
+  `longtitude` double DEFAULT NULL COMMENT '经度',
+  `address` varchar(50) DEFAULT NULL COMMENT '地址',
   `photo` varchar(200) DEFAULT NULL COMMENT '头像',
   `login_ip` varchar(20) DEFAULT NULL COMMENT '最后登陆IP',
   `login_date` datetime DEFAULT NULL COMMENT '最后登陆时间',
@@ -65,94 +144,9 @@ CREATE TABLE `plat_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- ----------------------------
--- Records of plat_user
+-- Records of sys_user
 -- ----------------------------
-INSERT INTO plat_user VALUES ('1', 's123456789', '248698d0841cf61fad3d0e4e6d538fda', 'q', 'q', null, '185', null, null, null, '2017-08-28 11:18:45', '1', null, null, null, '0');
-
--- ----------------------------
--- Table structure for `resource_permission`
--- ----------------------------
-DROP TABLE IF EXISTS `resource_permission`;
-CREATE TABLE `resource_permission` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `permission` varchar(100) NOT NULL COMMENT '权限',
-  `url` varchar(100) NOT NULL COMMENT '连接',
-  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标志',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='资源匹配';
-
--- ----------------------------
--- Records of resource_permission
--- ----------------------------
-INSERT INTO resource_permission VALUES ('2', 'wwwe', '/loginController/logi2', '0');
-INSERT INTO resource_permission VALUES ('6', 'sss', '/loginControllr/loin2', '0');
-
--- ----------------------------
--- Table structure for `role`
--- ----------------------------
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
-  `id` varchar(64) NOT NULL COMMENT '编号',
-  `name` varchar(20) NOT NULL COMMENT '角色名称',
-  `create_by` varchar(64) NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `remarks` varchar(200) DEFAULT NULL COMMENT '备注信息',
-  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
-
--- ----------------------------
--- Records of role
--- ----------------------------
-INSERT INTO role VALUES ('0900bdb1-da45-497a-9402-60f963945ce9', '普通管理员', '111', '2017-08-25 17:42:34', '没有备注', '0');
-INSERT INTO role VALUES ('0d319f6c-af0c-4bb2-8e11-cad2d7a300dc', '普通管理员', '111', '2017-08-25 17:43:59', '没有备注', '0');
-INSERT INTO role VALUES ('14fe5c65-35eb-4037-8fef-a1b70c5ce4a7', '普通管理员', '111', '2017-08-25 17:46:22', '没有备注', '0');
-INSERT INTO role VALUES ('281434d6-294e-4a64-a26b-37e81e640c61', '用户', '111', '2017-08-25 17:48:05', '没有备注', '0');
-INSERT INTO role VALUES ('2990c8f1-8e74-47a3-b9b8-e8ca8713c2b6', '用户', '111', '2017-08-25 17:46:22', '没有备注', '0');
-INSERT INTO role VALUES ('353a0dad-cb65-4ae0-8bea-ac0a848de339', '用户', '111', '2017-08-25 17:43:59', '没有备注', '0');
-INSERT INTO role VALUES ('5f82b7f4-f760-4a2e-966e-f1aa833cf8a8', '超级管理员', '111', '2017-08-25 17:46:22', '没有备注', '0');
-INSERT INTO role VALUES ('64fc3c83-6052-4339-8d89-72372afc8580', '超级管理员', '111', '2017-08-25 17:42:34', '没有备注', '0');
-INSERT INTO role VALUES ('6aabcdba-4b2c-420f-88e1-6947f2c463ad', '超级管理员', '111', '2017-08-25 17:43:58', '没有备注', '0');
-INSERT INTO role VALUES ('89f2fa0a-8796-4a7b-8ee5-1486d09bcfd5', '普通管理员', '111', '2017-08-25 17:48:05', '没有备注', '0');
-INSERT INTO role VALUES ('97b13d6f-0306-4a26-8560-4661b3aa0b0e', '超级管理员', '111', '2017-08-25 17:48:05', '没有备注', '0');
-INSERT INTO role VALUES ('bd6ceeed-5d00-400b-b129-3d4d2227c87d', '用户', '111', '2017-08-25 17:42:34', '没有备注', '0');
-
--- ----------------------------
--- Table structure for `role_permission`
--- ----------------------------
-DROP TABLE IF EXISTS `role_permission`;
-CREATE TABLE `role_permission` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `role_id` varchar(64) NOT NULL COMMENT '角色编号',
-  `permission_id` varchar(64) NOT NULL COMMENT '权限编号',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `role_id` (`role_id`,`permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='角色-权限';
-
--- ----------------------------
--- Records of role_permission
--- ----------------------------
-INSERT INTO role_permission VALUES ('1', '0900bdb1-da45-497a-9402-60f963945ce9', '24f7eeec-6701-4d05-b75b-07f351c57a19');
-INSERT INTO role_permission VALUES ('2', '0900bdb1-da45-497a-9402-60f963945ce9', '73b748e4-d82d-496e-a69a-baa05ebea322');
-INSERT INTO role_permission VALUES ('3', '0900bdb1-da45-497a-9402-60f963945ce9', 'b7ec6d88-ce25-4e72-adf0-a5b67f29ac1f');
-
--- ----------------------------
--- Table structure for `sub_server`
--- ----------------------------
-DROP TABLE IF EXISTS `sub_server`;
-CREATE TABLE `sub_server` (
-  `id` varchar(64) NOT NULL COMMENT '编号',
-  `name` varchar(50) NOT NULL COMMENT '子服务器名称',
-  `create_by` varchar(64) NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建日期',
-  `del_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of sub_server
--- ----------------------------
+INSERT INTO sys_user VALUES ('就不告诉你', '0', '0', 's123456789', '248698d0841cf61fad3d0e4e6d538fda', '贝格管理员', '18562172893', null, null, '莱山区明达西路11号', null, null, null, '2017-08-28 11:18:45', '0', null, null, '最高级管理员', '0');
 
 -- ----------------------------
 -- Table structure for `user_role`
@@ -165,9 +159,8 @@ CREATE TABLE `user_role` (
   `create_by` varchar(64) NOT NULL COMMENT '创建者',
   `create_date` datetime NOT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户-角色';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户-角色';
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-INSERT INTO user_role VALUES ('1', '1', '0900bdb1-da45-497a-9402-60f963945ce9', '1', '2017-08-28 11:23:20');
