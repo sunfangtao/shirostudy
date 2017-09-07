@@ -3,6 +3,8 @@ package com.aioute.controller;
 import com.sft.model.Permission;
 import com.sft.model.Role;
 import com.sft.model.UserModel;
+import com.sft.model.bean.PermissionBean;
+import com.sft.model.bean.RoleBean;
 import com.sft.service.RolePermissionService;
 import com.sft.service.UserService;
 import com.sft.util.CloudError;
@@ -19,7 +21,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("rolePermission")
@@ -31,7 +35,7 @@ public class RolePermissionController {
     private RolePermissionService rolePermissionService;
 
     /**
-     * 新建角色
+     * 新建角色 done
      *
      * @param name
      * @param remarks
@@ -67,15 +71,18 @@ public class RolePermissionController {
     }
 
     /**
-     * 获取所有角色
+     * 获取所有角色 done
      */
     @ResponseBody
     @RequestMapping("roles")
     public String roles(HttpServletRequest req) {
         int page = PagingUtil.getPage(req);
         int pageSize = PagingUtil.getPageSize(req);
-        List<Role> roleList = rolePermissionService.getRoles(page, pageSize);
-        int count = rolePermissionService.getRoleCount();
+        Map<String, String> whereMap = new HashMap<String, String>();
+        whereMap.put("name", req.getParameter("name"));
+        whereMap.put("del_flag", req.getParameter("del_flag"));
+        List<RoleBean> roleList = rolePermissionService.getRoles(whereMap, page, pageSize);
+        int count = rolePermissionService.getRoleCount(whereMap);
         return SendPlatJSONUtil.getPageJsonString(0, "", count, roleList);
     }
 
@@ -103,13 +110,13 @@ public class RolePermissionController {
             }
         }
 
-        List<Role> roleList = rolePermissionService.getRoles(userId);
+        List<RoleBean> roleList = rolePermissionService.getRoles(userId);
 
         return SendAppJSONUtil.getNormalString(roleList);
     }
 
     /**
-     * 更新角色
+     * 更新角色 done
      *
      * @param req
      * @param res
@@ -255,9 +262,21 @@ public class RolePermissionController {
     @RequestMapping("getRolePermissions")
     public String getRolePermissions(HttpServletRequest req, HttpServletResponse res) {
         String roleId = req.getParameter("roleId");
+        String isHas = req.getParameter("isHas");
 
         if (StringUtils.hasText(roleId)) {
-            List<Permission> permissionList = rolePermissionService.getRolePermissionsList(roleId);
+            List<PermissionBean> permissionList = rolePermissionService.getRolePermissionsList(roleId);
+            if (isHas != null) {
+                // 获取系统所有权限
+                List<PermissionBean> allPermissionList = rolePermissionService.getPermissions(null, 0, 0);
+                int length = allPermissionList.size();
+                for (int i = 0; i < length; i++) {
+                    PermissionBean permission = allPermissionList.get(i);
+                    if (permissionList.contains(permission)) {
+                        permission.setHas(true);
+                    }
+                }
+            }
             return SendAppJSONUtil.getNormalString(permissionList);
         } else {
             // 必须有角色信息
@@ -274,8 +293,30 @@ public class RolePermissionController {
     @ResponseBody
     @RequestMapping("getResourcePermissions")
     public String getResourcePermissions(HttpServletRequest req, HttpServletResponse res) {
-        List<Permission> permissionList = rolePermissionService.getUrlPermissions();
+        List<PermissionBean> permissionList = rolePermissionService.getUrlPermissions();
         return SendAppJSONUtil.getNormalString(permissionList);
+    }
+
+    /**
+     * 获取系统所有权限
+     *
+     * @param req
+     * @param res
+     */
+    @ResponseBody
+    @RequestMapping("getAllPermissions")
+    public String getAllPermissions(HttpServletRequest req, HttpServletResponse res) {
+        int page = PagingUtil.getPage(req);
+        int pageSize = PagingUtil.getPageSize(req);
+        Map<String, String> whereMap = new HashMap<String, String>();
+        whereMap.put("name", req.getParameter("name"));
+        whereMap.put("url", req.getParameter("url"));
+        whereMap.put("type", req.getParameter("type"));
+        whereMap.put("permission", req.getParameter("permission"));
+        whereMap.put("del_flag", req.getParameter("del_flag"));
+        List<PermissionBean> permissionList = rolePermissionService.getPermissions(whereMap, page, pageSize);
+        int count = rolePermissionService.getPermissionCount(whereMap);
+        return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);
     }
 
 }

@@ -12,52 +12,77 @@
 </head>
 <body>
 
-<div class="layui-container">
-    <div class="layui-row">
-        <table class="layui-table" lay-data="{height:313, url:'/rolePermission/roles',page:true, id:'idTest',
-                    request: {pageName: 'page',limitName: 'pageSize'}}" lay-filter="roleTable">
-            <thead>
-            <tr>
-                <th lay-data="{field:'id', width:200, sort: true, align:'center'}">ID</th>
-                <th lay-data="{field:'name', width:150, align:'center'}">权限名</th>
-                <th lay-data="{field:'permission', width:150, align:'center'}">权限标识</th>
-                <th lay-data="{field:'url', width:150, align:'center'}">资源地址</th>
-                <th lay-data="{field:'type', width:150, align:'center'}">映射标识</th>
-                <th lay-data="{field:'module', width:150, align:'center'}">模块名称</th>
-                <%--<th lay-data="{field:'create_by', width:150, align:'center'}">创建者</th>--%>
-                <%--<th lay-data="{field:'create_date', width:180, align:'center'}">创建日期</th>--%>
-                <%--<th lay-data="{field:'update_by', width:150, align:'center'}">更新者</th>--%>
-                <%--<th lay-data="{field:'update_date', width:180, align:'center'}">更新日期</th>--%>
-                <th lay-data="{field:'del_flag', width:120, align:'center', templet: '#validateTpl'}">是否有效</th>
-                <th lay-data="{field:'remarks', width:120, align:'center'}">备注</th>
-                <th lay-data="{fixed: 'right', width:150, align:'center', toolbar: '#barTool'}"></th>
-            </tr>
-            </thead>
-        </table>
+<button class="layui-btn layui-btn-small" onclick="addPermission()">
+    <i class="layui-icon">&#xe608;</i> 添加
+</button>
+
+<form class="layui-form">
+    <div class="layui-input-block" style="width: 120px">
+        <select id="permission_validate_type" lay-filter="permission_validate_select">
+            <option value="2">全部</option>
+            <option value="0">有效</option>
+            <option value="1">无效</option>
+        </select>
     </div>
-</div>
+</form>
+
+<div id="permission_table" lay-filter="permissionTable"></div>
 
 <form id="edit_permission" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
     <div class="layui-form-item" style="display:none;">
-        <label class="layui-form-label">角色ID</label>
+        <label class="layui-form-label">权限ID</label>
         <div class="layui-input-block">
-            <input id="roleId" class="layui-input" type="label" name="roleId" lay-verify="required" autocomplete="off">
+            <input id="permissionId" class="layui-input" type="label" name="permissionId" autocomplete="off">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">角色名称</label>
+        <label class="layui-form-label">所属模块</label>
+        <div class="layui-input-block">
+            <select id="module_type" lay-filter="module_select">
+                <option value="2">全部</option>
+                <option value="0">有效</option>
+                <option value="1">无效</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限名称</label>
         <div class="layui-input-block">
             <input id="name" class="layui-input" type="text" name="name" lay-verify="required" autocomplete="off"
-                   placeholder="请输入角色名称">
+                   placeholder="请输入权限名称">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限标识</label>
+        <div class="layui-input-block">
+            <input id="permission" class="layui-input" type="text" name="permission" lay-verify="required"
+                   autocomplete="off"
+                   placeholder="请输入权限标识">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">资源地址</label>
+        <div class="layui-input-block">
+            <input id="url" class="layui-input" type="text" name="url" lay-verify="required" autocomplete="off"
+                   placeholder="请输入资源地址">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">访问标识</label>
+        <div class="layui-input-block">
+            <input id="type" class="layui-input" type="text" name="type" lay-verify="required" autocomplete="off"
+                   placeholder="访问标识">
         </div>
     </div>
 
     <div class="layui-form-item" pane="">
         <label class="layui-form-label">是否删除</label>
         <div class="layui-input-block">
-            <input id="del_flag" type="checkbox" name="del_flag" value="1" lay-skin="switch" lay-filter="switchTest"
-                   lay-text="是|否" checked>
+            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch" lay-filter="switchTest"
+                   lay-text="是|否" value="1">
         </div>
     </div>
 
@@ -83,6 +108,6 @@
 </script>
 
 <script src="${ctx}/static/layui/layui.js" charset="utf-8"></script>
-<script src="${ctx}/static/js/role.js" charset="utf-8"></script>
+<script src="${ctx}/static/js/permission.js" charset="utf-8"></script>
 </body>
 </html>
