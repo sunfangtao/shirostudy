@@ -21,7 +21,7 @@ layui.use(['table', 'layer', 'form'], function () {
             // {field: 'update_date', title: '更新日期', width: 200, align: 'center', templet: '#dateTpl'},
             {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
             {field: 'del_flag', title: '备注', width: 200, align: 'center'},
-            {fixed: 'right', width:150, align:'center', toolbar: '#barTool'}
+            {fixed: 'right', width: 150, align: 'center', toolbar: '#barTool'}
         ]], // 设置表头
         request: {
             pageName: 'page', // 页码的参数名称，默认：page
@@ -39,18 +39,43 @@ layui.use(['table', 'layer', 'form'], function () {
 
     table.on('tool(permissionTable)', function (obj) {
         if (obj.event == 'del') {
-            // 设置角色无效
+            // 设置权限无效
             deletePermission(obj);
         } else {
-            // 编辑角色
+            // 编辑权限
             editPermission(obj);
         }
     });
 
-    form.on('select(validate_select)', function (data) {
+    form.on('select(permission_validate_type)', function (data) {
         reloadTable();
     });
 });
+
+/**
+ * 初始化模块下拉
+ */
+function selectionInit() {
+    var $ = layui.jquery;
+
+    $.ajax({
+        type: 'post',
+        url: "/rolePermission/getAllModule",
+        async: false,
+        data: {},
+        error: function (request) {
+            layer.msg("模块获取失败!", {time: 1500});
+        },
+        success: function (data) {
+            for (var i = 0; i < data.data.length; i++) {
+                var result = data.data[i];
+                $("#permission_validate_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
+            }
+            var form = layui.form;
+            form.render('select', 'permission_validate_select');
+        }
+    });
+}
 
 /**
  * 重新渲染角色表格
@@ -58,12 +83,12 @@ layui.use(['table', 'layer', 'form'], function () {
 function reloadTable() {
     var table = layui.table;
     var $ = layui.jquery;
-    table.reload('role_talbe', {
+    table.reload('permission_table', {
         limit: 10,
         even: true,
         page: true,
         where: {
-            del_flag: $('#validate_type').val()
+            del_flag: $('#permission_validate_type').val()
         }
     });
 }
@@ -121,6 +146,7 @@ function deletePermission(obj) {
  */
 function editPermission(obj) {
     var $ = layui.jquery;
+    selectionInit();
     resetForm();
     layer.open({
         title: "编辑权限信息",
@@ -138,7 +164,7 @@ function editPermission(obj) {
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
-                        if ($('#validate_type').val() == 2) {
+                        if ($('#permission_validate_type').val() == 2) {
                             // 同步更新缓存对应的值
                             obj.update({
                                 name: $("#name").val(),

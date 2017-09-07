@@ -33,6 +33,8 @@ public class RolePermissionController {
     private UserService userService;
     @Resource
     private RolePermissionService rolePermissionService;
+    @Resource
+    private ModuleService moduleService;
 
     /**
      * 新建角色 done
@@ -319,4 +321,16 @@ public class RolePermissionController {
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);
     }
 
+    /**
+     * 获取系统所有模块
+     *
+     * @param req
+     * @param res
+     */
+    @ResponseBody
+    @RequestMapping("getAllModule")
+    public String getAllModule(HttpServletRequest req, HttpServletResponse res) {
+        List<ModuleBean> moduleList = moduleService.getAllModule();
+        return SendAppJSONUtil.getNormalString(moduleList);
+    }
 }
