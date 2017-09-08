@@ -39,19 +39,17 @@
     <div class="layui-form-item">
         <label class="layui-form-label">所属模块</label>
         <div class="layui-input-block">
-            <select id="module_type" lay-filter="module_select">
-                <option value="2">全部</option>
-                <option value="0">有效</option>
-                <option value="1">无效</option>
+            <select id="module_type" name="moduleId" lay-filter="module_select">
+                <option value="" >请选择模块</option>
             </select>
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">权限名称</label>
+        <label class="layui-form-label">权限别名</label>
         <div class="layui-input-block">
             <input id="name" class="layui-input" type="text" name="name" lay-verify="required" autocomplete="off"
-                   placeholder="请输入权限名称">
+                   placeholder="请输入权限别名">
         </div>
     </div>
 
@@ -74,14 +72,14 @@
         <label class="layui-form-label">访问标识</label>
         <div class="layui-input-block">
             <input id="type" class="layui-input" type="text" name="type" lay-verify="required" autocomplete="off"
-                   placeholder="访问标识">
+                   placeholder="请输入访问标识">
         </div>
     </div>
 
     <div class="layui-form-item" pane="">
         <label class="layui-form-label">是否删除</label>
         <div class="layui-input-block">
-            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch" lay-filter="switchTest"
+            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch" lay-filter="switchPermission"
                    lay-text="是|否" value="1">
         </div>
     </div>

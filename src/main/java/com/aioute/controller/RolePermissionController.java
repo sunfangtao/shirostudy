@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("rolePermission")
@@ -33,8 +30,6 @@ public class RolePermissionController {
     private UserService userService;
     @Resource
     private RolePermissionService rolePermissionService;
-    @Resource
-    private ModuleService moduleService;
 
     /**
      * 新建角色 done
@@ -233,17 +228,32 @@ public class RolePermissionController {
         String moduleId = req.getParameter("moduleId");
         String name = req.getParameter("name");
         String remarks = req.getParameter("remarks");
+        String permissionStr = req.getParameter("permission");
+        String url = req.getParameter("url");
+        String type = req.getParameter("type");
+        String del_flag = req.getParameter("del_flag");
 
         if (StringUtils.hasText(moduleId)) {
             if (StringUtils.hasText(name)) {
-                permission.setModule_id(moduleId);
-                permission.setName(name);
-                permission.setRemarks(remarks);
+                if (StringUtils.hasText(permissionStr)) {
+                    permission.setModule_id(moduleId);
+                    permission.setName(name);
+                    permission.setRemarks(remarks);
+                    permission.setPermission(permissionStr);
+                    permission.setUrl(url);
+                    permission.setType(type);
+                    if ("1".equals(del_flag)) {
+                        permission.setDel_flag(1);
+                    }
+                    permission.setCreate_by((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
 
-                if (rolePermissionService.addPermission(permission)) {
-                    return SendAppJSONUtil.getNormalString("添加成功!");
+                    if (rolePermissionService.addPermission(permission)) {
+                        return SendAppJSONUtil.getNormalString("添加成功!");
+                    } else {
+                        return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
+                    }
                 } else {
-                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
+                    return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限标识!");
                 }
             } else {
                 return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限别名!");
@@ -251,6 +261,62 @@ public class RolePermissionController {
         } else {
             // 必须有模块分类
             return SendAppJSONUtil.getRequireParamsMissingObject("请选择所属模块!");
+        }
+    }
+
+    /**
+     * 更新角色 done
+     *
+     * @param req
+     * @param res
+     */
+    @ResponseBody
+    @RequestMapping("updatePermission")
+    public String updatePermission(HttpServletRequest req, HttpServletResponse res) {
+        Permission permission = new Permission();
+        String permissionId = req.getParameter("permissionId");
+        if (StringUtils.hasText(permissionId)) {
+            permission.setId(permissionId);
+            String moduleId = req.getParameter("moduleId");
+            String name = req.getParameter("name");
+            String remarks = req.getParameter("remarks");
+            String del_flag = req.getParameter("del_flag");
+            String type = req.getParameter("type");
+            String url = req.getParameter("url");
+            String permissionStr = req.getParameter("permission");
+            if (StringUtils.hasText(moduleId)) {
+                permission.setModule_id(moduleId);
+            }
+            if (StringUtils.hasText(name)) {
+                permission.setName(name);
+            }
+            if (StringUtils.hasText(remarks)) {
+                permission.setRemarks(remarks);
+            }
+            if (StringUtils.hasText(del_flag) && !del_flag.equals("0")) {
+                permission.setDel_flag(1);
+            }
+            if (StringUtils.hasText(type)) {
+                permission.setType(type);
+            }
+            if (StringUtils.hasText(url)) {
+                permission.setUrl(url);
+            }
+            if (StringUtils.hasText(permissionStr)) {
+                permission.setPermission(permissionStr);
+            }
+
+            String userId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
+            if (rolePermissionService.updatePermission(permission, userId)) {
+                return SendAppJSONUtil.getNormalString("更新成功!");
+            } else {
+                // 角色名称不能重复
+                String sr = SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.REPEAT.getValue(), "角色名称不能重复!");
+                return sr;
+            }
+        } else {
+            // 必须有权限编号
+            return SendAppJSONUtil.getRequireParamsMissingObject("缺少权限编号!");
         }
     }
 
@@ -269,15 +335,24 @@ public class RolePermissionController {
         if (StringUtils.hasText(roleId)) {
             List<PermissionBean> permissionList = rolePermissionService.getRolePermissionsList(roleId);
             if (isHas != null) {
-                // 获取系统所有权限
-                List<PermissionBean> allPermissionList = rolePermissionService.getPermissions(null, 0, 0);
+                // 获取当前用户拥有的所有系统权限
+                List<PermissionBean> allPermissionList = rolePermissionService.getPermissions();
+                Map<String, List<PermissionBean>> permissionBeanMap = new TreeMap<String, List<PermissionBean>>();
                 int length = allPermissionList.size();
                 for (int i = 0; i < length; i++) {
                     PermissionBean permission = allPermissionList.get(i);
                     if (permissionList.contains(permission)) {
                         permission.setHas(true);
                     }
+                    List<PermissionBean> list = permissionBeanMap.get(permission.getModule());
+                    if (list == null) {
+                        list = new ArrayList<PermissionBean>();
+                        permissionBeanMap.put(permission.getModule(), list);
+                    }
+                    list.add(permission);
                 }
+                String s = SendAppJSONUtil.getNormalString(permissionBeanMap);
+                return s;
             }
             return SendAppJSONUtil.getNormalString(permissionList);
         } else {
@@ -321,16 +396,4 @@ public class RolePermissionController {
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);
     }
 
-    /**
-     * 获取系统所有模块
-     *
-     * @param req
-     * @param res
-     */
-    @ResponseBody
-    @RequestMapping("getAllModule")
-    public String getAllModule(HttpServletRequest req, HttpServletResponse res) {
-        List<ModuleBean> moduleList = moduleService.getAllModule();
-        return SendAppJSONUtil.getNormalString(moduleList);
-    }
 }

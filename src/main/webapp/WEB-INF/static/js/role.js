@@ -2,23 +2,6 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
     var table = layui.table;
     var $ = layui.jquery;
     var form = layui.form;
-    var element = layui.element;
-
-    var Choice = {
-        checkAll: function () {
-            var selectionButton = $('.sy-colla-checkbox').find(':checkbox');
-            selectionButton.change(function () {
-                var submenu = $(this).parent().siblings('.sy-layui-colla-content').find(':checkbox');
-                if ($(this).prop('checked')) {
-                    submenu.prop('checked', true);
-                } else {
-                    submenu.prop('checked', false);
-                }
-            });
-            form.render('checkbox'); // 刷新select选择框渲染
-        }
-    };
-    Choice.checkAll();
 
     // 执行渲染
     table.render({
@@ -87,6 +70,7 @@ function reloadTable() {
  */
 function resetForm() {
     layui.jquery('#edit_role')[0].reset();
+    layui.jquery('#edit_role_permission')[0].reset();
 }
 
 /**
@@ -117,7 +101,7 @@ function deleteRole(obj) {
                 if ($('#validate_type').val() == 2) {
                     // 同步更新缓存对应的值
                     obj.update({
-                        del_flag: $("#del_flag").prop('checked') ? 1 : 0
+                        del_flag: 1
                     });
                 } else {
                     reloadTable();
@@ -192,6 +176,7 @@ function editRole(obj) {
 function updateRolePermission(obj) {
     var $ = layui.jquery;
     resetForm();
+    rolePermissionInit(obj.data.id);
     layer.open({
         title: "编辑角色权限",
         type: 1,
@@ -204,35 +189,118 @@ function updateRolePermission(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/getRolePermissions',
+                url: '/rolePermission/updateRolePermissions',
                 data: {
                     roleId: obj.data.id,
-                    isHas: true
+                    permissionIds: getCheckedIds()
                 },
                 success: function (data) {
-                    // if (data.result == "success") {
-                    //     if ($('#validate_type').val() == 2) {
-                    //         // 同步更新缓存对应的值
-                    //         obj.update({
-                    //             name: $("#name").val(),
-                    //             remarks: $("#remarks").val(),
-                    //             del_flag: $("#del_flag").prop('checked') ? 1 : 0
-                    //         });
-                    //     } else {
-                    //         reloadTable();
-                    //     }
-                    //     layer.close(index);
-                    //     layer.msg(data.data.info, {time: 800});
-                    // } else {
-                    //     layer.msg(data.message, {time: 1500});
-                    // }
-                },
-                error: function (request) {
-                    layer.msg("获取失败!", {time: 1500});
+                    layer.close(index);
                 }
             });
         }
     });
+}
+
+function rolePermissionInit(roleId) {
+    var $ = layui.jquery;
+    var form = layui.form;
+    $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: '/rolePermission/getRolePermissions',
+        data: {
+            roleId: roleId,
+            isHas: true// 将包含所有的可获取的系统权限
+        },
+        success: function (data) {
+            if (data.result == "success") {
+                $('#edit_role_tree').html("");
+                var json = data.data.array;
+
+                var html = "";
+                var start = "<div class=\"layui-colla-item sy-layui-colla-item\">"
+                start += "<h2 class=\"layui-colla-title sy-layui-colla-title\"></h2>";
+                start += "<div class=\"sy-colla-checkbox\">";
+                start += "<input type=\"checkbox\" lay-skin=\"primary\">"
+
+                for (var key in json) {
+                    var content = start;
+                    content += ("<span>" + key + "</span></div>");
+                    content += "<div class=\"sy-colla-blank0px\"></div>";
+                    content += "<div class=\"layui-colla-content sy-layui-colla-content\">";
+                    content += "<ul class=\"sy-colla-submenu\">";
+                    var value = json[key];
+                    console.info(value);
+                    var length = value.length;
+                    for (var i = 0; i < length; i++) {
+                        console.info(value[i].name);
+                        content += "<li><input type=\"checkbox\" lay-skin=\"primary\"";
+                        content += (" id=\"" + value[i].id + "\"");
+                        console.info(value[i].isHas);
+                        if (value[i].isHas) {
+                            content += (" checked/>");
+                        }else{
+                            content += ("/>");
+                        }
+                        content += ("<span>" + value[i].name + "</span></li>");
+                    }
+                    content += "</ul></div><div class=\"sy-colla-blank0px\"></div></div>";
+                    console.info(content);
+                    html += content;
+                }
+                $('#edit_role_tree').html(html);
+                layui.element.init();
+
+                var Choice = {
+                    checkAll: function () {
+                        var selectionButton = $('.sy-colla-checkbox').find(':checkbox');
+                        selectionButton.change(function () {
+                            var submenu = $(this).parent().siblings('.sy-layui-colla-content').find(':checkbox');
+                            if ($(this).prop('checked')) {
+                                submenu.prop('checked', true);
+                            } else {
+                                submenu.prop('checked', false);
+                            }
+                        });
+                        var submenu1 = selectionButton.parent().siblings('.sy-layui-colla-content').find(':checkbox');
+                        submenu1.change(function () {
+                            var submenu2 = $(this).parents('.sy-colla-submenu').find(':checkbox');
+                            var isAllSelected = true;
+                            submenu2.each(function () {
+                                isAllSelected &= $(this).prop('checked');
+                            });
+                            var selectionButton1 = $(this).parents('.sy-layui-colla-content').siblings('.sy-colla-checkbox').find(':checkbox');
+                            if (isAllSelected) {
+                                selectionButton1.prop('checked', true);
+                            } else {
+                                selectionButton1.prop('checked', false);
+                            }
+                        });
+                        form.render('checkbox'); // 刷新select选择框渲染
+                    }
+                };
+                Choice.checkAll();
+            } else {
+                layer.msg(data.message, {time: 1500});
+            }
+        },
+        error: function (request) {
+            layer.msg("获取失败!", {time: 1500});
+        }
+    });
+}
+
+function getCheckedIds() {
+    var $ = layui.jquery;
+    var selectionButton = $('.sy-colla-checkbox').find(':checkbox');
+    var submenu = selectionButton.parent().siblings('.sy-layui-colla-content').find(':checkbox');
+
+    var ids = "";
+    submenu.each(function () {
+        ids += ($(this).prop('checked') ? ($(this).prop('id') + "@") : "");
+    });
+    return ids.substring(0, ids.length - 1);
 }
 
 /**

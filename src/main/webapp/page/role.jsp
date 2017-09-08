@@ -61,8 +61,8 @@
     </div>
 </form>
 
-<form id="edit_role_permission" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
-    <div class="layui-collapse sy-layui-collapse" lay-filter="role_permission">
+<form id="edit_role_permission" style="display:none;padding: 5px;">
+    <div id="edit_role_tree" class="layui-collapse sy-layui-collapse" lay-filter="role_permission">
         <div class="layui-colla-item sy-layui-colla-item">
             <h2 class="layui-colla-title sy-layui-colla-title"></h2>
             <div class="sy-colla-checkbox">
@@ -74,10 +74,6 @@
                 <ul class="sy-colla-submenu">
                     <li><input type="checkbox" name="" title=" 子权限1" lay-skin="primary"><span>子权限1</span></li>
                     <li><input type="checkbox" name="" title=" 子权限2" lay-skin="primary"><span>子权限2</span></li>
-                    <li><input type="checkbox" name="" title=" 子权限3" lay-skin="primary"><span>子权限3</span></li>
-                    <li><input type="checkbox" name="" title=" 子权限4" lay-skin="primary"><span>子权限4</span></li>
-                    <li><input type="checkbox" name="" title=" 子权限5" lay-skin="primary"><span>子权限5</span></li>
-                    <li><input type="checkbox" name="" title=" 子权限6" lay-skin="primary"><span>子权限6</span></li>
                 </ul>
             </div>
             <div class="sy-colla-blank0px"></div>

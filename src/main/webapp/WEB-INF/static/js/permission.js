@@ -1,4 +1,4 @@
-layui.use(['table', 'layer', 'form'], function () {
+layui.use(['table', 'layer', 'form', 'element'], function () {
     var table = layui.table;
     var $ = layui.jquery;
     var form = layui.form;
@@ -10,7 +10,7 @@ layui.use(['table', 'layer', 'form'], function () {
         height: 500, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
-            {field: 'name', title: '权限名', width: 200, align: 'center'},
+            {field: 'name', title: '权限别名', width: 200, align: 'center'},
             {field: 'permission', title: '权限标识', width: 200, align: 'center'},
             {field: 'url', title: '资源地址', width: 200, align: 'center'},
             {field: 'type', title: '映射标识', width: 200, align: 'center'},
@@ -20,7 +20,7 @@ layui.use(['table', 'layer', 'form'], function () {
             // {field: 'update_by', title: '更新者', width: 200, align: 'center'},
             // {field: 'update_date', title: '更新日期', width: 200, align: 'center', templet: '#dateTpl'},
             {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
-            {field: 'del_flag', title: '备注', width: 200, align: 'center'},
+            {field: 'remarks', title: '备注', width: 200, align: 'center'},
             {fixed: 'right', width: 150, align: 'center', toolbar: '#barTool'}
         ]], // 设置表头
         request: {
@@ -47,9 +47,11 @@ layui.use(['table', 'layer', 'form'], function () {
         }
     });
 
-    form.on('select(permission_validate_type)', function (data) {
+    form.on('select(permission_validate_select)', function (data) {
         reloadTable();
     });
+
+    selectionInit();
 });
 
 /**
@@ -60,19 +62,23 @@ function selectionInit() {
 
     $.ajax({
         type: 'post',
-        url: "/rolePermission/getAllModule",
+        url: "/module/getAllModule",
         async: false,
-        data: {},
+        dataType: 'json',
+        data: {
+            isAll: true
+        },
         error: function (request) {
             layer.msg("模块获取失败!", {time: 1500});
         },
         success: function (data) {
-            for (var i = 0; i < data.data.length; i++) {
-                var result = data.data[i];
-                $("#permission_validate_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
+            var moduleArr = data.data;
+            for (var i = 0; i < moduleArr.length; i++) {
+                var result = moduleArr[i];
+                $("#module_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
             }
             var form = layui.form;
-            form.render('select', 'permission_validate_select');
+            form.render('select', 'module_select');
         }
     });
 }
@@ -128,7 +134,7 @@ function deletePermission(obj) {
                 if ($('#validate_type').val() == 2) {
                     // 同步更新缓存对应的值
                     obj.update({
-                        del_flag: $("#del_flag").prop('checked') ? 1 : 0
+                        del_flag: 1
                     });
                 } else {
                     reloadTable();
@@ -146,7 +152,6 @@ function deletePermission(obj) {
  */
 function editPermission(obj) {
     var $ = layui.jquery;
-    selectionInit();
     resetForm();
     layer.open({
         title: "编辑权限信息",
@@ -169,7 +174,12 @@ function editPermission(obj) {
                             obj.update({
                                 name: $("#name").val(),
                                 remarks: $("#remarks").val(),
-                                del_flag: $("#del_flag").prop('checked') ? 1 : 0
+                                del_flag: $("#del_flag").prop('checked') ? 1 : 0,
+                                permission: $("#permission").val(),
+                                url: $("#url").val(),
+                                type: $("#type").val(),
+                                module_id: $("#module_type").val(),
+                                module: $("#module_type").find("option:selected").text()
                             });
                         } else {
                             reloadTable();
@@ -186,12 +196,16 @@ function editPermission(obj) {
             });
         },
         success: function (layero, index) {
-            $("#roleId").val(obj.data.id);
-            $("#remarks").val(obj.data.remarks);
+            $("#module_type").val(obj.data.module_id);
+            $("#permissionId").val(obj.data.id);
             $("#name").val(obj.data.name);
+            $("#permission").val(obj.data.permission);
+            $("#url").val(obj.data.url);
+            $("#type").val(obj.data.type);
+            $("#remarks").val(obj.data.remarks);
             if (obj.data.del_flag == 0) {
                 $("#del_flag").removeProp("checked");
-                layui.form.render('checkbox');
+                layui.form.render('checkbox', 'switchPermission');
             }
         }
     });
