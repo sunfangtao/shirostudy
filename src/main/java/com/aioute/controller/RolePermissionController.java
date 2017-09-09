@@ -1,11 +1,14 @@
 package com.aioute.controller;
 
+import com.aioute.service.RolePermissionService;
+import com.aioute.util.UrlPermissionUtil;
 import com.sft.model.Permission;
 import com.sft.model.Role;
 import com.sft.model.UserModel;
 import com.sft.model.bean.PermissionBean;
 import com.sft.model.bean.RoleBean;
-import com.sft.service.RolePermissionService;
+import com.sft.service.PermissionService;
+import com.sft.service.RoleService;
 import com.sft.service.UserService;
 import com.sft.util.CloudError;
 import com.sft.util.PagingUtil;
@@ -30,6 +33,12 @@ public class RolePermissionController {
     private UserService userService;
     @Resource
     private RolePermissionService rolePermissionService;
+    @Resource
+    private RoleService roleService;
+    @Resource
+    private PermissionService permissionService;
+    @Resource
+    private UrlPermissionUtil urlPermissionUtil;
 
     /**
      * 新建角色 done
@@ -107,7 +116,7 @@ public class RolePermissionController {
             }
         }
 
-        List<RoleBean> roleList = rolePermissionService.getRoles(userId);
+        List<RoleBean> roleList = roleService.getRoles(userId);
 
         return SendAppJSONUtil.getNormalString(roleList);
     }
@@ -169,7 +178,8 @@ public class RolePermissionController {
                 userModel.setId(userId);
                 if (subUserList.contains(userModel)) {
                     List<String> roleIdList = Arrays.asList(roleIds.split("@"));
-                    if (rolePermissionService.updateUserRoles(userId, roleIdList, loginUserId)) {
+                    if (roleService.updateUserRoles(userId, roleIdList, loginUserId)) {
+                        urlPermissionUtil.updateUserPermission(userService.getUserById(userId).getLogin_name());
                         return SendAppJSONUtil.getNormalString("更新成功!");
                     } else {
                         return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
@@ -197,20 +207,19 @@ public class RolePermissionController {
     public String updateRolePermissions(HttpServletRequest req, HttpServletResponse res) {
         String permissionIds = req.getParameter("permissionIds");
         String roleId = req.getParameter("roleId");
-        if (StringUtils.hasText(permissionIds)) {
-            if (StringUtils.hasText(roleId)) {
-                List<String> permissionStrList = Arrays.asList(permissionIds.split("@"));
-                if (rolePermissionService.updateRolePermission(roleId, permissionStrList)) {
-                    return SendAppJSONUtil.getNormalString("更新成功!");
-                } else {
-                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
-                }
+        if (StringUtils.hasText(roleId)) {
+            List<String> permissionStrList = null;
+            if (StringUtils.hasText(permissionIds)) {
+                permissionStrList = Arrays.asList(permissionIds.split("@"));
+            }
+            if (rolePermissionService.updateRolePermission(roleId, permissionStrList)) {
+                urlPermissionUtil.updateUserPermission(null);
+                return SendAppJSONUtil.getNormalString("更新成功!");
             } else {
-                return SendAppJSONUtil.getRequireParamsMissingObject("缺少角色信息!");
+                return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
             }
         } else {
-            // 必须有权限列表
-            return SendAppJSONUtil.getRequireParamsMissingObject("请选择修改的权限!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("缺少角色信息!");
         }
     }
 
@@ -233,34 +242,37 @@ public class RolePermissionController {
         String type = req.getParameter("type");
         String del_flag = req.getParameter("del_flag");
 
-        if (StringUtils.hasText(moduleId)) {
-            if (StringUtils.hasText(name)) {
-                if (StringUtils.hasText(permissionStr)) {
-                    permission.setModule_id(moduleId);
-                    permission.setName(name);
-                    permission.setRemarks(remarks);
-                    permission.setPermission(permissionStr);
-                    permission.setUrl(url);
-                    permission.setType(type);
-                    if ("1".equals(del_flag)) {
-                        permission.setDel_flag(1);
-                    }
-                    permission.setCreate_by((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
-
-                    if (rolePermissionService.addPermission(permission)) {
-                        return SendAppJSONUtil.getNormalString("添加成功!");
-                    } else {
-                        return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
-                    }
-                } else {
-                    return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限标识!");
-                }
-            } else {
-                return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限别名!");
-            }
-        } else {
+        if (!StringUtils.hasText(moduleId)) {
             // 必须有模块分类
             return SendAppJSONUtil.getRequireParamsMissingObject("请选择所属模块!");
+        }
+        if (!StringUtils.hasText(name)) {
+            return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限别名!");
+        }
+        if (!StringUtils.hasText(permissionStr)) {
+            return SendAppJSONUtil.getRequireParamsMissingObject("请填写权限标识!");
+        }
+        if (permissionStr.contains("*")) {
+            return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.IOException.getValue(), "权限标识不要出现*");
+        }
+        permission.setModule_id(moduleId);
+        permission.setName(name);
+        permission.setRemarks(remarks);
+        permission.setPermission(permissionStr);
+        permission.setUrl(url);
+        permission.setType(type);
+        if ("1".equals(del_flag)) {
+            permission.setDel_flag(1);
+        }
+        permission.setCreate_by((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
+
+        if (rolePermissionService.addPermission(permission)) {
+            if (StringUtils.hasText(url)) {
+                urlPermissionUtil.updateUrlPermission();
+            }
+            return SendAppJSONUtil.getNormalString("添加成功!");
+        } else {
+            return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "添加失败!");
         }
     }
 
@@ -308,6 +320,9 @@ public class RolePermissionController {
 
             String userId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
             if (rolePermissionService.updatePermission(permission, userId)) {
+                if (StringUtils.hasText(url)) {
+                    urlPermissionUtil.updateUrlPermission();
+                }
                 return SendAppJSONUtil.getNormalString("更新成功!");
             } else {
                 // 角色名称不能重复
@@ -351,8 +366,7 @@ public class RolePermissionController {
                     }
                     list.add(permission);
                 }
-                String s = SendAppJSONUtil.getNormalString(permissionBeanMap);
-                return s;
+                return SendAppJSONUtil.getNormalString(permissionBeanMap);
             }
             return SendAppJSONUtil.getNormalString(permissionList);
         } else {
@@ -370,7 +384,7 @@ public class RolePermissionController {
     @ResponseBody
     @RequestMapping("getResourcePermissions")
     public String getResourcePermissions(HttpServletRequest req, HttpServletResponse res) {
-        List<PermissionBean> permissionList = rolePermissionService.getUrlPermissions();
+        List<PermissionBean> permissionList = permissionService.getUrlPermissions();
         return SendAppJSONUtil.getNormalString(permissionList);
     }
 

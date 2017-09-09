@@ -26,7 +26,7 @@ layui.use(['table', 'layer', 'form'], function () {
         even: true,
         page: true,
         limits: [10, 15, 20],
-        url: '/module/getAllModule',
+        url: ctx + '/module/getAllModule',
     });
 
     table.on('tool(moduleTable)', function (obj) {
@@ -74,7 +74,7 @@ function deleteModule(obj) {
         $.ajax({
             cache: false,
             type: 'post',
-            url: "/module/updateModule",
+            url: ctx + "/module/updateModule",
             async: false,
             data: {
                 moduleId: obj.data.id,
@@ -113,7 +113,7 @@ function editModule(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/module/updateModule',
+                url: ctx + '/module/updateModule',
                 data: $("#edit_module").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
@@ -166,7 +166,7 @@ function addModule() {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/module/addModule',
+                url: ctx + '/module/addModule',
                 data: $("#edit_module").serialize(),
                 success: function (data) {
                     if (data.result == "success") {

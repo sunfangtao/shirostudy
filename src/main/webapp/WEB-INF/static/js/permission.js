@@ -31,7 +31,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         even: true,
         page: true,
         limits: [10, 15, 20],
-        url: '/rolePermission/getAllPermissions',
+        url: ctx + '/rolePermission/getAllPermissions',
         where: {
             del_flag: $('#permission_validate_type').val()
         }
@@ -62,7 +62,7 @@ function selectionInit() {
 
     $.ajax({
         type: 'post',
-        url: "/module/getAllModule",
+        url: ctx + "/module/getAllModule",
         async: false,
         dataType: 'json',
         data: {
@@ -121,7 +121,7 @@ function deletePermission(obj) {
         $.ajax({
             cache: false,
             type: 'post',
-            url: "/rolePermission/updatePermission",
+            url: ctx + "/rolePermission/updatePermission",
             async: false,
             data: {
                 permissionId: obj.data.id,
@@ -165,7 +165,7 @@ function editPermission(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/updatePermission',
+                url: ctx + '/rolePermission/updatePermission',
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
@@ -230,7 +230,7 @@ function addPermission() {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/addPermission',
+                url: ctx + '/rolePermission/addPermission',
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {

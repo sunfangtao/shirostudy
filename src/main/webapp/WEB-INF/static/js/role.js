@@ -25,7 +25,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         even: true,
         page: true,
         limits: [10, 15, 20],
-        url: '/rolePermission/roles',
+        url: ctx + '/rolePermission/roles',
         where: {
             del_flag: $('#validate_type').val()
         }
@@ -88,7 +88,7 @@ function deleteRole(obj) {
         $.ajax({
             cache: false,
             type: 'post',
-            url: "/rolePermission/updateRole",
+            url: ctx + "/rolePermission/updateRole",
             async: false,
             data: {
                 roleId: obj.data.id,
@@ -132,7 +132,7 @@ function editRole(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/updateRole',
+                url: ctx + '/rolePermission/updateRole',
                 data: $("#edit_role").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
@@ -189,7 +189,7 @@ function updateRolePermission(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/updateRolePermissions',
+                url: ctx + '/rolePermission/updateRolePermissions',
                 data: {
                     roleId: obj.data.id,
                     permissionIds: getCheckedIds()
@@ -208,12 +208,13 @@ function rolePermissionInit(roleId) {
     $.ajax({
         type: 'post',
         dataType: 'json',
-        url: '/rolePermission/getRolePermissions',
+        url: ctx + '/rolePermission/getRolePermissions',
         data: {
             roleId: roleId,
             isHas: true// 将包含所有的可获取的系统权限
         },
         success: function (data) {
+            console.info(data);
             if (data.result == "success") {
                 $('#edit_role_tree').html("");
                 var json = data.data.array;
@@ -222,33 +223,31 @@ function rolePermissionInit(roleId) {
                 var start = "<div class=\"layui-colla-item sy-layui-colla-item\">"
                 start += "<h2 class=\"layui-colla-title sy-layui-colla-title\"></h2>";
                 start += "<div class=\"sy-colla-checkbox\">";
-                start += "<input type=\"checkbox\" lay-skin=\"primary\">"
+                start += "<input type=\"checkbox\" lay-skin=\"primary\""
 
                 for (var key in json) {
-                    var content = start;
+                    var content = "";
                     content += ("<span>" + key + "</span></div>");
                     content += "<div class=\"sy-colla-blank0px\"></div>";
                     content += "<div class=\"layui-colla-content sy-layui-colla-content\">";
                     content += "<ul class=\"sy-colla-submenu\">";
                     var value = json[key];
-                    console.info(value);
                     var length = value.length;
+                    var j = length;
+
                     for (var i = 0; i < length; i++) {
-                        console.info(value[i].name);
                         content += "<li><input type=\"checkbox\" lay-skin=\"primary\"";
                         content += (" id=\"" + value[i].id + "\"");
-                        console.info(value[i].isHas);
                         if (value[i].isHas) {
-                            content += (" checked/>");
-                        }else{
-                            content += ("/>");
+                            content += (" checked");
+                            j--;
                         }
-                        content += ("<span>" + value[i].name + "</span></li>");
+                        content += ("><span>" + value[i].name + "</span></li>");
                     }
                     content += "</ul></div><div class=\"sy-colla-blank0px\"></div></div>";
-                    console.info(content);
-                    html += content;
+                    html += (start + (j == 0 ? " checked>" : ">") + content);
                 }
+                console.info(html);
                 $('#edit_role_tree').html(html);
                 layui.element.init();
 
@@ -321,7 +320,7 @@ function addRole() {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: '/rolePermission/addRole',
+                url: ctx + '/rolePermission/addRole',
                 data: $("#edit_role").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
