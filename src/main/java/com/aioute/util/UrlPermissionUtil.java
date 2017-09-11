@@ -2,6 +2,7 @@ package com.aioute.util;
 
 import com.aioute.service.ModuleService;
 import com.sft.model.bean.ModuleBean;
+import com.sft.service.RoleService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +17,8 @@ public class UrlPermissionUtil {
 
     @Resource
     private ModuleService moduleService;
+    @Resource
+    private RoleService roleService;
 
     /**
      * 更新资源权限

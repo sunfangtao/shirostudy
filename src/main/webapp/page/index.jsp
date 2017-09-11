@@ -17,10 +17,11 @@
         <li class="layui-nav-item layui-this"><a>角色管理</a></li>
         <li class="layui-nav-item"><a>权限管理</a></li>
         <li class="layui-nav-item"><a>模块管理</a></li>
+        <li class="layui-nav-item"><a>用户管理</a></li>
     </ul>
 </div>
 
-<iframe id="iframe" width="100%" height="600px" src="${ctx}/page/role.jsp"></iframe>
+<iframe id="iframe" style="border: none" width="100%" height="700px" src="${ctx}/page/role.jsp"></iframe>
 
 <script src="${ctx}/static/layui/layui.js" charset="utf-8"></script>
 <script src="${ctx}/static/js/index.js" charset="utf-8"></script>

@@ -173,6 +173,12 @@
         <filters>
             <filter>src/main/filters/filter-${env}.properties</filter>
         </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
@@ -191,9 +197,6 @@
             <properties>
                 <env>develop</env>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault><!--默认启用的是dev环境配置-->
-            </activation>
         </profile>
         <!-- 生产环境 -->
         <profile>
@@ -208,6 +211,9 @@
             <properties>
                 <env>test</env>
             </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault><!--默认启用的是dev环境配置-->
+            </activation>
         </profile>
     </profiles>
 

@@ -13,19 +13,23 @@
 </head>
 <body>
 
-<button class="layui-btn layui-btn-small" onclick="addRole()">
-    <i class="layui-icon">&#xe608;</i> 添加
-</button>
 
-<form class="layui-form">
-    <div class="layui-input-block" style="width: 120px">
+<div class="layui-form">
+
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-small" onclick="addRole()">
+            <i class="layui-icon">&#xe608;</i> 添加
+        </button>
+    </div>
+
+    <div class="layui-inline" style="width: 120px">
         <select id="validate_type" lay-filter="validate_select">
             <option value="2">全部</option>
             <option value="0">有效</option>
             <option value="1">无效</option>
         </select>
     </div>
-</form>
+</div>
 
 <div id="role_talbe" lay-filter="roleTable"></div>
 
@@ -69,13 +73,13 @@
                 <input type="checkbox" name="" title=" 父权限1" lay-skin="primary">
                 <span>父权限1</span>
             </div>
-            <div class="sy-colla-blank0px"></div>
-            <div class="layui-colla-content sy-layui-colla-content">
-                <ul class="sy-colla-submenu">
-                    <li><input type="checkbox" name="" title=" 子权限1" lay-skin="primary"><span>子权限1</span></li>
-                    <li><input type="checkbox" name="" title=" 子权限2" lay-skin="primary"><span>子权限2</span></li>
-                </ul>
-            </div>
+            <%--<div class="sy-colla-blank0px"></div>--%>
+            <%--<div class="layui-colla-content sy-layui-colla-content">--%>
+                <%--<ul class="sy-colla-submenu">--%>
+                    <%--<li><input type="checkbox" name="" title=" 子权限1" lay-skin="primary"><span>子权限1</span></li>--%>
+                    <%--<li><input type="checkbox" name="" title=" 子权限2" lay-skin="primary"><span>子权限2</span></li>--%>
+                <%--</ul>--%>
+            <%--</div>--%>
             <div class="sy-colla-blank0px"></div>
         </div>
     </div>

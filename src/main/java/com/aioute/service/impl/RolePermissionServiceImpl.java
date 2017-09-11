@@ -32,7 +32,6 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         if (role.getDel_flag() != 0) {
             role.setDel_flag(1);
         }
-        role.setId(UUID.randomUUID().toString());
         role.setCreate_date(DateUtil.getCurDate());
 
         boolean result = rolePermissionDao.addRole(role);
@@ -41,8 +40,8 @@ public class RolePermissionServiceImpl implements RolePermissionService {
             //  增加超级管理员的默认角色
             List<String> roleIdList = new ArrayList<String>();
             roleIdList.add(role.getId());
-            roleService.updateUserRoles("0", roleIdList, "0");
             roleService.updateUserRoles("1", roleIdList, "0");
+            roleService.updateUserRoles("2", roleIdList, "0");
         }
         return result;
     }

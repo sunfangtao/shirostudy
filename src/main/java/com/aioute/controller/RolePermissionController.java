@@ -64,6 +64,7 @@ public class RolePermissionController {
             // 必须有角色名称
             return SendAppJSONUtil.getRequireParamsMissingObject("必须填写角色名称!");
         }
+        role.setId(UUID.randomUUID().toString());
         role.setCreate_by((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
         boolean result = rolePermissionService.addRole(role);
         if (result) {
@@ -77,7 +78,7 @@ public class RolePermissionController {
     }
 
     /**
-     * 获取所有角色 done
+     * 获取所有角色
      */
     @ResponseBody
     @RequestMapping("roles")
@@ -102,13 +103,14 @@ public class RolePermissionController {
     @RequestMapping("userRoles")
     public String userRoles(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
+        String isHas = req.getParameter("isHas");
         String loginUserId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
         if (!StringUtils.hasText(userId)) {
             // 没有userId,就默认使用当前登录用户
             userId = loginUserId;
         } else {
             // 必须是当前用户的子用户
-            List<UserModel> subUserList = userService.getSubUserById(loginUserId);
+            List<UserModel> subUserList = userService.getSubUserById(null, loginUserId, 0, 0);
             UserModel userModel = new UserModel();
             userModel.setId(userId);
             if (!subUserList.contains(userModel)) {
@@ -117,6 +119,19 @@ public class RolePermissionController {
         }
 
         List<RoleBean> roleList = roleService.getRoles(userId);
+
+        if (isHas != null) {
+            // 获取当前用户的所有系统角色
+            List<RoleBean> allRoleList = roleService.getRoles((String) SecurityUtils.getSubject().getSession().getAttribute("userId"));
+            int length = allRoleList.size();
+            for (int i = 0; i < length; i++) {
+                RoleBean roleBean = allRoleList.get(i);
+                if (roleList.contains(roleBean)) {
+                    roleBean.setHas(true);
+                }
+            }
+            return SendAppJSONUtil.getNormalString(allRoleList);
+        }
 
         return SendAppJSONUtil.getNormalString(roleList);
     }
@@ -171,28 +186,23 @@ public class RolePermissionController {
         String roleIds = req.getParameter("roleIds");
         String userId = req.getParameter("userId");
         String loginUserId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
-        if (StringUtils.hasText(roleIds)) {
-            if (StringUtils.hasText(userId)) {
-                List<UserModel> subUserList = userService.getSubUserById(loginUserId);
-                UserModel userModel = new UserModel();
-                userModel.setId(userId);
-                if (subUserList.contains(userModel)) {
-                    List<String> roleIdList = Arrays.asList(roleIds.split("@"));
-                    if (roleService.updateUserRoles(userId, roleIdList, loginUserId)) {
-                        urlPermissionUtil.updateUserPermission(userService.getUserById(userId).getLogin_name());
-                        return SendAppJSONUtil.getNormalString("更新成功!");
-                    } else {
-                        return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
-                    }
+        if (StringUtils.hasText(userId)) {
+            List<UserModel> subUserList = userService.getSubUserById(null, loginUserId, 0, 0);
+            UserModel userModel = new UserModel();
+            userModel.setId(userId);
+            if (subUserList.contains(userModel)) {
+                List<String> roleIdList = Arrays.asList(roleIds.split("@"));
+                if (roleService.updateUserRoles(userId, roleIdList, loginUserId)) {
+                    urlPermissionUtil.updateUserPermission(userService.getUserById(userId).getLogin_name());
+                    return SendAppJSONUtil.getNormalString("更新成功!");
                 } else {
-                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
+                    return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.SQLEXCEPTION.getValue(), "更新失败!");
                 }
             } else {
-                return SendAppJSONUtil.getRequireParamsMissingObject("缺少用户信息!");
+                return SendAppJSONUtil.getFailResultObject(CloudError.ReasonEnum.NODATA.getValue(), "您创建的用户中没有此用户!");
             }
         } else {
-            // 必须有角色编号
-            return SendAppJSONUtil.getRequireParamsMissingObject("请选择修改的角色!");
+            return SendAppJSONUtil.getRequireParamsMissingObject("缺少用户信息!");
         }
     }
 
@@ -405,6 +415,7 @@ public class RolePermissionController {
         whereMap.put("type", req.getParameter("type"));
         whereMap.put("permission", req.getParameter("permission"));
         whereMap.put("del_flag", req.getParameter("del_flag"));
+        whereMap.put("moduleId", req.getParameter("moduleId"));
         List<PermissionBean> permissionList = rolePermissionService.getPermissions(whereMap, page, pageSize);
         int count = rolePermissionService.getPermissionCount(whereMap);
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);

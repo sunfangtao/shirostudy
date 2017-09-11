@@ -10,7 +10,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         height: 500, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
-            {field: 'name', title: '角色名', width: 200, align: 'center'},
+            {field: 'name', title: '角色名', width: 300, align: 'center'},
             {field: 'create_name', title: '创建者', width: 200, align: 'center'},
             {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
             {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},

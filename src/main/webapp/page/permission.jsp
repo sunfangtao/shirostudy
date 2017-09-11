@@ -12,19 +12,27 @@
 </head>
 <body>
 
-<button class="layui-btn layui-btn-small" onclick="addPermission()">
-    <i class="layui-icon">&#xe608;</i> 添加
-</button>
-
-<form class="layui-form">
-    <div class="layui-input-block" style="width: 120px">
-        <select id="permission_validate_type" lay-filter="permission_validate_select">
-            <option value="2">全部</option>
-            <option value="0">有效</option>
-            <option value="1">无效</option>
-        </select>
+<div class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-small" onclick="addPermission()">
+                <i class="layui-icon">&#xe608;</i> 添加
+            </button>
+        </div>
+        <div class="layui-inline" style="width: 120px">
+            <select id="permission_validate_select" lay-filter="permission_validate_select">
+                <option value="2">全部</option>
+                <option value="0">有效</option>
+                <option value="1">无效</option>
+            </select>
+        </div>
+        <div class="layui-inline" style="width: 160px">
+            <select id="module_select" lay-filter="module_select">
+                <option value="0">请选择模块</option>
+            </select>
+        </div>
     </div>
-</form>
+</div>
 
 <div id="permission_table" lay-filter="permissionTable"></div>
 
@@ -39,8 +47,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">所属模块</label>
         <div class="layui-input-block">
-            <select id="module_type" name="moduleId" lay-filter="module_select">
-                <option value="" >请选择模块</option>
+            <select id="module_type" name="moduleId" lay-filter="module_type">
+                <option value="">请选择模块</option>
             </select>
         </div>
     </div>
@@ -79,7 +87,8 @@
     <div class="layui-form-item" pane="">
         <label class="layui-form-label">是否删除</label>
         <div class="layui-input-block">
-            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch" lay-filter="switchPermission"
+            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch"
+                   lay-filter="switchPermission"
                    lay-text="是|否" value="1">
         </div>
     </div>

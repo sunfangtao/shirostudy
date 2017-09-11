@@ -10,6 +10,8 @@ layui.use('element', function () {
             $("#iframe").attr("src", ctx + "/page/permission.jsp");
         } else if (data.text() == "模块管理") {
             $("#iframe").attr("src", ctx + "/page/module.jsp");
+        } else if (data.text() == "用户管理") {
+            $("#iframe").attr("src", ctx + "/page/user.jsp");
         }
     });
 });

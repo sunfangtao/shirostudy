@@ -11,8 +11,8 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
             {field: 'name', title: '权限别名', width: 200, align: 'center'},
-            {field: 'permission', title: '权限标识', width: 200, align: 'center'},
-            {field: 'url', title: '资源地址', width: 200, align: 'center'},
+            {field: 'permission', title: '权限标识', width: 240, align: 'center'},
+            {field: 'url', title: '资源地址', width: 240, align: 'center'},
             {field: 'type', title: '映射标识', width: 200, align: 'center'},
             {field: 'module', title: '模块名称', width: 200, align: 'center'},
             // {field: 'create_by', title: '创建者', width: 200, align: 'center'},
@@ -33,7 +33,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         limits: [10, 15, 20],
         url: ctx + '/rolePermission/getAllPermissions',
         where: {
-            del_flag: $('#permission_validate_type').val()
+            del_flag: $('#permission_validate_select').val()
         }
     });
 
@@ -48,6 +48,10 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
     });
 
     form.on('select(permission_validate_select)', function (data) {
+        reloadTable();
+    });
+
+    form.on('select(module_select)', function (data) {
         reloadTable();
     });
 
@@ -76,9 +80,10 @@ function selectionInit() {
             for (var i = 0; i < moduleArr.length; i++) {
                 var result = moduleArr[i];
                 $("#module_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
+                $("#module_select").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
             }
             var form = layui.form;
-            form.render('select', 'module_select');
+            form.render('select');
         }
     });
 }
@@ -94,7 +99,8 @@ function reloadTable() {
         even: true,
         page: true,
         where: {
-            del_flag: $('#permission_validate_type').val()
+            del_flag: $('#permission_validate_select').val(),
+            moduleId: $('#module_select').val()
         }
     });
 }
@@ -169,7 +175,7 @@ function editPermission(obj) {
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
-                        if ($('#permission_validate_type').val() == 2) {
+                        if ($('#permission_validate_select').val() == 2) {
                             // 同步更新缓存对应的值
                             obj.update({
                                 name: $("#name").val(),

@@ -1,18 +1,19 @@
-layui.use(['table', 'layer', 'form'], function () {
+layui.use(['table', 'layer', 'form', 'element'], function () {
     var table = layui.table;
     var $ = layui.jquery;
     var form = layui.form;
 
     // 执行渲染
     table.render({
-        id: 'module_talbe',
-        elem: '#module_talbe', // 指定原始表格元素选择器（推荐id选择器）
+        id: 'user_talbe',
+        elem: '#user_talbe', // 指定原始表格元素选择器（推荐id选择器）
         height: 500, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
-            {field: 'name', title: '角色名', width: 200, align: 'center'},
-            {field: 'address', title: '访问地址', width: 300, align: 'center'},
-            {field: 'create_name', title: '创建者', width: 200, align: 'center'},
+            {field: 'name', title: '名称', width: 200, align: 'center'},
+            {field: 'login_name', title: '账号', width: 300, align: 'center'},
+            // {field: 'password', title: '密码', width: 200, align: 'center'},
+            {field: 'phone', title: '电话', width: 200, align: 'center'},
             {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
             {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
             {field: 'remarks', title: '备注', width: 200, align: 'center'},
@@ -26,16 +27,19 @@ layui.use(['table', 'layer', 'form'], function () {
         even: true,
         page: true,
         limits: [10, 15, 20],
-        url: ctx + '/module/getAllModule',
+        url: ctx + '/user/getUser',
     });
 
-    table.on('tool(moduleTable)', function (obj) {
+    table.on('tool(userTable)', function (obj) {
         if (obj.event == 'del') {
             // 设置模块无效
-            deleteModule(obj);
+            deleteUser(obj);
+        } else if (obj.event == 'upd') {
+            // 编辑用户角色
+            updateUserRole(obj);
         } else {
             // 编辑模块
-            editModule(obj);
+            editUser(obj);
         }
     });
 });
@@ -46,7 +50,7 @@ layui.use(['table', 'layer', 'form'], function () {
 function reloadTable() {
     var table = layui.table;
     var $ = layui.jquery;
-    table.reload('module_talbe', {
+    table.reload('user_talbe', {
         limit: 10,
         even: true,
         page: true,
@@ -57,14 +61,51 @@ function reloadTable() {
  * 重置角色信息表单
  */
 function resetForm() {
-    layui.jquery('#edit_module')[0].reset();
+    layui.jquery('#edit_user')[0].reset();
+}
+
+/**
+ * 编辑用户角色
+ * @param obj
+ */
+function updateUserRole(obj) {
+    var $ = layui.jquery;
+    resetForm();
+    roleInit(obj.data.id);
+    layer.open({
+        title: "编辑用户角色",
+        type: 1,
+        skin: 'layui-layer-rim',
+        shadeClose: true,
+        btn: ['保存'],
+        area: ['400px', '600px'],
+        content: $("#edit_user_role"),
+        yes: function (index) {
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: ctx + '/rolePermission/updateUserRoles',
+                data: {
+                    roleIds: getCheckedIds(),
+                    userId: obj.data.id
+                },
+                success: function (data) {
+                    layer.msg("操作成功!", {time: 800});
+                    layer.close(index);
+                },
+                error: function (request) {
+                    layer.msg("删除失败!", {time: 1500});
+                }
+            });
+        }
+    });
 }
 
 /**
  * 删除模块信息
  * @param obj
  */
-function deleteModule(obj) {
+function deleteUser(obj) {
     if (obj.data.del_flag == 1) {
         layer.msg("无需重复操作！", {time: 800});
         return;
@@ -74,7 +115,7 @@ function deleteModule(obj) {
         $.ajax({
             cache: false,
             type: 'post',
-            url: ctx + "/module/updateModule",
+            url: ctx + "/user/updateUser",
             async: false,
             data: {
                 moduleId: obj.data.id,
@@ -95,32 +136,33 @@ function deleteModule(obj) {
 }
 
 /**
- * 编辑模块
+ * 编辑用户
  * @param obj
  */
-function editModule(obj) {
+function editUser(obj) {
     var $ = layui.jquery;
     resetForm();
+    $("#account_layout").css("display", "none");
     layer.open({
-        title: "编辑模块信息",
+        title: "编辑用户信息",
         type: 1,
         skin: 'layui-layer-rim',
         shadeClose: true,
         btn: ['保存'],
         area: ['400px'],
-        content: $("#edit_module"),
+        content: $("#edit_user"),
         yes: function (index) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: ctx + '/module/updateModule',
-                data: $("#edit_module").serialize(),
+                url: ctx + '/user/updateUser',
+                data: $("#edit_user").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
                         // 同步更新缓存对应的值
                         obj.update({
                             name: $("#name").val(),
-                            address: $("#address").val(),
+                            phone: $("#phone").val(),
                             remarks: $("#remarks").val(),
                             del_flag: $("#del_flag").prop('checked') ? 1 : 0
                         });
@@ -136,8 +178,10 @@ function editModule(obj) {
             });
         },
         success: function (layero, index) {
+            $("#userId").val(obj.data.id);
+            $("#login_name").val(obj.data.login_name);
             $("#moduleId").val(obj.data.id);
-            $("#address").val(obj.data.address);
+            $("#phone").val(obj.data.phone);
             $("#remarks").val(obj.data.remarks);
             $("#name").val(obj.data.name);
             if (obj.data.del_flag == 0) {
@@ -149,25 +193,26 @@ function editModule(obj) {
 }
 
 /**
- * 新增模块
+ * 新增用户
  */
-function addModule() {
+function addUser() {
     var $ = layui.jquery;
     resetForm();
+    $("#account_layout").css("display", "block");
     layer.open({
-        title: "新建模块信息",
+        title: "新建用户信息",
         type: 1,
         skin: 'layui-layer-rim',
         shadeClose: true,
         btn: ['新增'],
         area: ['400px'],
-        content: $("#edit_module"),
+        content: $("#edit_user"),
         yes: function (index) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: ctx + '/module/addModule',
-                data: $("#edit_module").serialize(),
+                url: ctx + '/user/addUser',
+                data: $("#edit_user").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
                         // 刷新表格
@@ -184,4 +229,57 @@ function addModule() {
             });
         }
     });
+}
+
+function roleInit(userId) {
+    var $ = layui.jquery;
+    var form = layui.form;
+    $.ajax({
+        type: 'post',
+        dataType: 'json',
+        url: ctx + '/rolePermission/userRoles',
+        data: {
+            userId: userId,
+            isHas: true// 将包含所有的可获取的系统权限
+        },
+        success: function (data) {
+            console.info(data);
+            if (data.result == "success") {
+                $('#edit_userrole_tree').html("");
+                var json = data.data.array;
+
+                var html = "";
+                var start = "<div class=\"layui-colla-item sy-layui-colla-item sy-layui-colla-item-mar\">";
+                start += "<div class=\"sy-colla-checkbox\">";
+                start += "<input type=\"checkbox\" lay-skin=\"primary\" id=\"";
+
+                for (var i = 0; i < json.length; i++) {
+                    start += (json[i].id + "\"");
+                    var content = "";
+                    content += ("<span>" + json[i].name + "</span></div>");
+                    content += "<div class=\"sy-colla-blank0px\"></div></div>";
+                    html += (start + (json[i].isHas ? " checked>" : ">") + content);
+                }
+                console.info(html);
+                $('#edit_userrole_tree').html(html);
+                layui.element.init();
+            } else {
+                layer.msg(data.message, {time: 1500});
+            }
+        },
+        error: function (request) {
+            layer.msg("获取失败!", {time: 1500});
+        }
+    });
+}
+
+function getCheckedIds() {
+    var $ = layui.jquery;
+    var selectionButton = $('.sy-colla-checkbox').find(':checkbox');
+
+    var ids = "";
+    selectionButton.each(function () {
+        ids += ($(this).prop('checked') ? ($(this).prop('id') + "@") : "");
+    });
+    return ids.substring(0, ids.length - 1);
 }

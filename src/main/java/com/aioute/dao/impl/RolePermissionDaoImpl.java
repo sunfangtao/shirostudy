@@ -444,6 +444,10 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
             if (StringUtils.hasText(permission)) {
                 sb.append(" and p.permission like %").append(permission).append("%");
             }
+            String moduleId = whereMap.get("moduleId");
+            if (StringUtils.hasText(permission)) {
+                sb.append(" and p.module_id ='").append(moduleId).append("'");
+            }
         }
         sb.append(" order by p.create_date desc");
         if (page > 0 && pageSize > 0) {
