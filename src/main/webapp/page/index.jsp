@@ -18,6 +18,8 @@
         <li class="layui-nav-item"><a>权限管理</a></li>
         <li class="layui-nav-item"><a>模块管理</a></li>
         <li class="layui-nav-item"><a>用户管理</a></li>
+        <li class="layui-nav-item"><a>APP连接管理</a></li>
+        <li class="layui-nav-item"><a href="${ctx}/logout">退出</a></li>
     </ul>
 </div>
 

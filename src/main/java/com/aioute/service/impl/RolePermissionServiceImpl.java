@@ -6,6 +6,7 @@ import com.sft.model.Permission;
 import com.sft.model.Role;
 import com.sft.model.bean.PermissionBean;
 import com.sft.model.bean.RoleBean;
+import com.sft.service.PermissionService;
 import com.sft.service.RoleService;
 import com.sft.util.DateUtil;
 import org.apache.shiro.util.StringUtils;
@@ -24,6 +25,8 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     private RolePermissionDao rolePermissionDao;
     @Resource
     private RoleService roleService;
+    @Resource
+    private PermissionService permissionService;
 
     public boolean addRole(Role role) {
         if (role == null) {
@@ -81,7 +84,13 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         permission.setId(UUID.randomUUID().toString());
         permission.setCreate_date(DateUtil.getCurDate());
 
-        return rolePermissionDao.addPermission(permission);
+        boolean result = rolePermissionDao.addPermission(permission);
+        if (result) {
+            if (StringUtils.hasText(permission.getType()) && StringUtils.hasText(permission.getUrl())) {
+                permissionService.updateUrlByType(permission.getType(), permission.getUrl());
+            }
+        }
+        return result;
     }
 
     public boolean updatePermission(Permission permission, String by) {
@@ -90,7 +99,13 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         }
         permission.setUpdate_by(by);
         permission.setUpdate_date(DateUtil.getCurDate());
-        return rolePermissionDao.updatePermission(permission);
+        boolean result = rolePermissionDao.updatePermission(permission);
+        if (result) {
+            if (StringUtils.hasText(permission.getType()) && StringUtils.hasText(permission.getUrl())) {
+                permissionService.updateUrlByType(permission.getType(), permission.getUrl());
+            }
+        }
+        return result;
     }
 
     public List<String> getPermissions(String userId) {

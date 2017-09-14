@@ -12,6 +12,8 @@ layui.use('element', function () {
             $("#iframe").attr("src", ctx + "/page/module.jsp");
         } else if (data.text() == "用户管理") {
             $("#iframe").attr("src", ctx + "/page/user.jsp");
+        } else if (data.text() == "APP连接管理") {
+            $("#iframe").attr("src", ctx + "/page/app_permission.jsp");
         }
     });
 });

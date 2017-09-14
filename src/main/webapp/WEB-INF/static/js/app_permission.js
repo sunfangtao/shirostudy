@@ -10,16 +10,9 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         height: 500, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
-            {field: 'name', title: '权限别名', width: 200, align: 'center'},
-            {field: 'permission', title: '权限标识', width: 240, align: 'center'},
-            {field: 'url', title: '资源地址', width: 240, align: 'center'},
             {field: 'type', title: '映射标识', width: 200, align: 'center'},
-            {field: 'module', title: '模块名称', width: 200, align: 'center'},
-            // {field: 'create_by', title: '创建者', width: 200, align: 'center'},
-            // {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
-            // {field: 'update_by', title: '更新者', width: 200, align: 'center'},
-            // {field: 'update_date', title: '更新日期', width: 200, align: 'center', templet: '#dateTpl'},
-            {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
+            {field: 'url', title: '资源地址', width: 240, align: 'center'},
+            {field: 'is_user', title: '是否需要登录', width: 200, align: 'center',templet: '#validateTpl'},
             {field: 'remarks', title: '备注', width: 200, align: 'center'},
             {fixed: 'right', width: 150, align: 'center', toolbar: '#barTool'}
         ]], // 设置表头
@@ -31,10 +24,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         even: true,
         page: true,
         limits: [10, 15, 20],
-        url: ctx + '/rolePermission/getAllPermissions',
-        where: {
-            del_flag: $('#permission_validate_select').val()
-        }
+        url: ctx + '/appPermission/getAllAppPermissions',
     });
 
     table.on('tool(permissionTable)', function (obj) {
@@ -47,46 +37,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
         }
     });
 
-    form.on('select(permission_validate_select)', function (data) {
-        reloadTable();
-    });
-
-    form.on('select(module_select)', function (data) {
-        reloadTable();
-    });
-
-    selectionInit();
 });
-
-/**
- * 初始化模块下拉
- */
-function selectionInit() {
-    var $ = layui.jquery;
-
-    $.ajax({
-        type: 'post',
-        url: ctx + "/module/getAllModule",
-        async: false,
-        dataType: 'json',
-        data: {
-            isAll: true
-        },
-        error: function (request) {
-            layer.msg("模块获取失败!", {time: 1500});
-        },
-        success: function (data) {
-            var moduleArr = data.data;
-            for (var i = 0; i < moduleArr.length; i++) {
-                var result = moduleArr[i];
-                $("#module_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
-                $("#module_select").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
-            }
-            var form = layui.form;
-            form.render('select');
-        }
-    });
-}
 
 /**
  * 重新渲染角色表格
@@ -98,10 +49,6 @@ function reloadTable() {
         limit: 10,
         even: true,
         page: true,
-        where: {
-            del_flag: $('#permission_validate_select').val(),
-            moduleId: $('#module_select').val()
-        }
     });
 }
 
@@ -117,36 +64,35 @@ function resetForm() {
  * @param obj
  */
 function deletePermission(obj) {
-    if (obj.data.del_flag == 1) {
+    if (obj.data.is_user == 1) {
         layer.msg("无需重复操作！", {time: 800});
         return;
     }
-
-    layer.confirm('真的删除么?', function (index) {
+    layer.confirm('需要登录才能使用?', function (index) {
         var $ = layui.jquery;
         $.ajax({
             cache: false,
             type: 'post',
-            url: ctx + "/rolePermission/updatePermission",
+            url: ctx + "/appPermission/updateAppPermission",
             async: false,
             data: {
-                permissionId: obj.data.id,
-                del_flag: 1
+                id: obj.data.id,
+                is_user: 1
             },
             error: function (request) {
-                layer.msg("删除失败!", {time: 1500});
+                layer.msg("更新失败!", {time: 1500});
             },
             success: function (json) {
                 if ($('#validate_type').val() == 2) {
                     // 同步更新缓存对应的值
                     obj.update({
-                        del_flag: 1
+                        is_user: 1
                     });
                 } else {
                     reloadTable();
                 }
                 layer.close(index);
-                layer.msg("删除成功!", {time: 800});
+                layer.msg("更新成功!", {time: 800});
             }
         });
     });
@@ -171,25 +117,17 @@ function editPermission(obj) {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: ctx + '/rolePermission/updatePermission',
+                url: ctx + '/appPermission/updateAppPermission',
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
-                        if ($('#permission_validate_select').val() == 2) {
-                            // 同步更新缓存对应的值
-                            obj.update({
-                                name: $("#name").val(),
-                                remarks: $("#remarks").val(),
-                                del_flag: $("#del_flag").prop('checked') ? 1 : 0,
-                                permission: $("#permission").val(),
-                                url: $("#url").val(),
-                                type: $("#type").val(),
-                                module_id: $("#module_type").val(),
-                                module: $("#module_type").find("option:selected").text()
-                            });
-                        } else {
-                            reloadTable();
-                        }
+                        // 同步更新缓存对应的值
+                        obj.update({
+                            remarks: $("#remarks").val(),
+                            is_user: $("#del_flag").prop('checked') ? 1 : 0,
+                            url: $("#url").val(),
+                            type: $("#type").val(),
+                        });
                         layer.close(index);
                         layer.msg(data.data.info, {time: 800});
                     } else {
@@ -202,15 +140,12 @@ function editPermission(obj) {
             });
         },
         success: function (layero, index) {
-            $("#module_type").val(obj.data.module_id);
-            $("#permissionId").val(obj.data.id);
-            $("#name").val(obj.data.name);
-            $("#permission").val(obj.data.permission);
+            $("#id").val(obj.data.id);
             $("#url").val(obj.data.url);
             $("#type").val(obj.data.type);
             $("#remarks").val(obj.data.remarks);
             if (obj.data.del_flag == 0) {
-                $("#del_flag").removeProp("checked");
+                $("#is_user").removeProp("checked");
                 layui.form.render('checkbox', 'switchPermission');
             }
         }
@@ -220,7 +155,7 @@ function editPermission(obj) {
 /**
  * 新增权限
  */
-function addPermission() {
+function addAppPermission() {
     var $ = layui.jquery;
     resetForm();
     layer.open({
@@ -235,7 +170,7 @@ function addPermission() {
             $.ajax({
                 type: 'post',
                 dataType: 'json',
-                url: ctx + '/rolePermission/addPermission',
+                url: ctx + '/appPermission/addAppPermission',
                 data: $("#edit_permission").serialize(),
                 success: function (data) {
                     if (data.result == "success") {
