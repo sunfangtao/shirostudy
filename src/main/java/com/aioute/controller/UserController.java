@@ -23,8 +23,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-    @Resource
-    private DefaultPasswordEncoder passwordEncoder;
 
     /**
      * 增加贝格用户(不包含子用户)
@@ -57,7 +55,7 @@ public class UserController {
         userModel.setId(UUID.randomUUID().toString());
         userModel.setName(name);
         userModel.setPhone(phone);
-        userModel.setPassword(passwordEncoder.encode(password));
+        userModel.setPassword(password);
         userModel.setCreate_by("1");
         userModel.setCreate_date(DateUtil.getCurDate());
         userModel.setRemarks(remarks);

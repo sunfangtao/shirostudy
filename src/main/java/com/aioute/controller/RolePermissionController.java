@@ -161,7 +161,13 @@ public class RolePermissionController {
             if (StringUtils.hasText(del_flag) && !del_flag.equals("0")) {
                 role.setDel_flag(1);
             }
+
+            Role existRole = rolePermissionService.getRole(roleId);
             if (rolePermissionService.updateRole(role)) {
+                if (existRole.getDel_flag() != role.getDel_flag()) {
+                    // 刷新缓存
+                    urlPermissionUtil.updateUserPermission(null);
+                }
                 return SendAppJSONUtil.getNormalString("更新成功!");
             } else {
                 // 角色名称不能重复
@@ -278,7 +284,7 @@ public class RolePermissionController {
 
         if (rolePermissionService.addPermission(permission)) {
             if (StringUtils.hasText(url)) {
-                urlPermissionUtil.updateUrlPermission();
+                urlPermissionUtil.updateUrlPermission(req.getCookies());
             }
             return SendAppJSONUtil.getNormalString("添加成功!");
         } else {
@@ -331,7 +337,7 @@ public class RolePermissionController {
             String userId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
             if (rolePermissionService.updatePermission(permission, userId)) {
                 if (StringUtils.hasText(url)) {
-                    urlPermissionUtil.updateUrlPermission();
+                    urlPermissionUtil.updateUrlPermission(req.getCookies());
                 }
                 return SendAppJSONUtil.getNormalString("更新成功!");
             } else {

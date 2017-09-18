@@ -19,6 +19,13 @@ public interface RolePermissionService {
     public boolean addRole(Role role);
 
     /**
+     *
+     * @param roleId
+     * @return
+     */
+    public Role getRole(String roleId);
+
+    /**
      * 获取所有角色
      *
      * @return

@@ -3,13 +3,19 @@ package com.aioute.util;
 import com.aioute.service.ModuleService;
 import com.sft.model.bean.ModuleBean;
 import com.sft.service.RoleService;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
+import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import javax.servlet.http.Cookie;
 import java.util.List;
 
 @Service
@@ -23,7 +29,7 @@ public class UrlPermissionUtil {
     /**
      * 更新资源权限
      */
-    public void updateUrlPermission() {
+    public void updateUrlPermission(final Cookie[] cookies) {
         new Thread(new Runnable() {
             public void run() {
                 List<ModuleBean> moduleList = moduleService.getAllModule(null, 0, 0);
@@ -31,7 +37,7 @@ public class UrlPermissionUtil {
                     int length = moduleList.size();
                     for (int i = 0; i < length; i++) {
                         String url = moduleList.get(i).getAddress() + "uController/resourceCache";
-                        sendGet(url);
+                        sendGet(url, null);
                     }
                 }
             }
@@ -49,50 +55,60 @@ public class UrlPermissionUtil {
                     int length = moduleList.size();
                     for (int i = 0; i < length; i++) {
                         String url = moduleList.get(i).getAddress() + "uController/shiroCache";
-                        if (account != null) {
-                            url += ("?account=" + account);
-                        }
-                        sendGet(url);
+                        sendGet(url, account);
                     }
                 }
             }
         }).start();
     }
 
-    private String sendGet(String url) {
-        String result = "";
-        BufferedReader in = null;
+    private String sendGet(String url, String account) {
         try {
-            URL realUrl = new URL(url);
-            // 打开和URL之间的连接
-            URLConnection connection = realUrl.openConnection();
-            // 设置通用的请求属性
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("user-agent",
-                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            // 建立实际的连接
-            connection.connect();
-            // 定义 BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result += line;
+            // 创建一个httpclient对象
+            CloseableHttpClient client = HttpClients.custom().build();
+
+            // 创建URIBuilder
+            URIBuilder uri = new URIBuilder(url);
+
+            // 设置参数
+            if (StringUtils.hasText(account)) {
+                uri.addParameter("account", account);
             }
+
+            // 创建httpGet对象
+            HttpGet hg = new HttpGet(uri.build());
+
+            // 设置请求的报文头部的编码
+            hg.setHeader(
+                    new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+
+            // 设置期望服务端返回的编码
+            hg.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
+
+            // 请求服务
+            CloseableHttpResponse response = client.execute(hg);
+
+            // 获取响应码
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode == 200) {
+                // 获取返回实例entity
+                HttpEntity entity = response.getEntity();
+                // 通过EntityUtils的一个工具方法获取返回内容
+                String resStr = EntityUtils.toString(entity, "utf-8");
+                // 输出
+                System.out.println("请求成功,请求返回内容为: " + resStr);
+                return resStr;
+            } else {
+                // 输出
+                System.out.println("请求失败,错误码为: " + statusCode);
+            }
+            // 关闭response和client
+            response.close();
+            client.close();
         } catch (Exception e) {
-            System.out.println("发送GET请求出现异常！" + e);
             e.printStackTrace();
         }
-        // 使用finally块来关闭输入流
-        finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Exception e2) {
-                e2.printStackTrace();
-            }
-        }
-        return result;
+        return null;
     }
 }

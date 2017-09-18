@@ -18,6 +18,8 @@ public interface RolePermissionDao {
      */
     public boolean addRole(Role role);
 
+    public Role getRole(String roleId);
+
     /**
      * 更新角色
      *
@@ -25,6 +27,13 @@ public interface RolePermissionDao {
      * @return
      */
     public boolean updateRole(Role role);
+
+    /**
+     * @param roleId
+     * @param userId
+     * @return
+     */
+    public boolean addUserRole(String roleId, String userId, String create_by, String create_date);
 
     /**
      * 获取所有角色

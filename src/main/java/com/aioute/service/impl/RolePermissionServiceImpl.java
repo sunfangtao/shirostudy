@@ -7,13 +7,11 @@ import com.sft.model.Role;
 import com.sft.model.bean.PermissionBean;
 import com.sft.model.bean.RoleBean;
 import com.sft.service.PermissionService;
-import com.sft.service.RoleService;
 import com.sft.util.DateUtil;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,8 +21,6 @@ public class RolePermissionServiceImpl implements RolePermissionService {
 
     @Resource
     private RolePermissionDao rolePermissionDao;
-    @Resource
-    private RoleService roleService;
     @Resource
     private PermissionService permissionService;
 
@@ -41,12 +37,16 @@ public class RolePermissionServiceImpl implements RolePermissionService {
 
         if (result) {
             //  增加超级管理员的默认角色
-            List<String> roleIdList = new ArrayList<String>();
-            roleIdList.add(role.getId());
-            roleService.updateUserRoles("1", roleIdList, "0");
-            roleService.updateUserRoles("2", roleIdList, "0");
+            rolePermissionDao.addUserRole(role.getId(), "1", "0", DateUtil.getCurDate());
         }
         return result;
+    }
+
+    public Role getRole(String roleId) {
+        if (StringUtils.hasText(roleId)) {
+            return rolePermissionDao.getRole(roleId);
+        }
+        return null;
     }
 
     public List<RoleBean> getRoles(Map<String, String> whereMap, int page, int pageSize) {

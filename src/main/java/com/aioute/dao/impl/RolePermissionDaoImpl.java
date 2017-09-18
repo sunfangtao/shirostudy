@@ -52,6 +52,36 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
         return false;
     }
 
+    public Role getRole(String roleId) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        Role role = new Role();
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("select * from role whre id = ?");
+
+        try {
+            con = sqlConnectionFactory.getConnection();
+            ps = con.prepareStatement(sb.toString());
+            ps.setString(1, roleId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                role.setDel_flag(rs.getInt("del_flag"));
+                role.setName(rs.getString("name"));
+                role.setId(rs.getString("id"));
+                role.setCreate_by(rs.getString("create_by"));
+                role.setCreate_date(rs.getString("create_date"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlConnectionFactory.closeConnetion(con, ps, null);
+        }
+        return role;
+    }
+
     public boolean updateRole(Role role) {
         Connection con = null;
         PreparedStatement ps = null;
@@ -74,6 +104,31 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
             con = sqlConnectionFactory.getConnection();
             ps = con.prepareStatement(sb.toString());
             ps.setString(1, role.getId());
+            int result = ps.executeUpdate();
+            if (result > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlConnectionFactory.closeConnetion(con, ps, null);
+        }
+        return false;
+    }
+
+    public boolean addUserRole(String roleId, String userId, String create_by, String create_date) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        StringBuffer sb = new StringBuffer();
+        sb.append("insert into user_role (roleId,userId,create_by,create_date) values (?,?,?,?)");
+
+        try {
+            con = sqlConnectionFactory.getConnection();
+            ps = con.prepareStatement(sb.toString());
+            ps.setString(1, roleId);
+            ps.setString(2, userId);
+            ps.setString(3, create_by);
+            ps.setString(4, create_date);
             int result = ps.executeUpdate();
             if (result > 0) {
                 return true;
@@ -308,7 +363,7 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
                 ps = con.prepareStatement(sb.toString());
                 result += ps.executeUpdate();
             }
-            if (result > 1) {
+            if (result >= 1) {
                 return true;
             }
         } catch (Exception e) {

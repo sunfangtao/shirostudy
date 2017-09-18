@@ -12,52 +12,60 @@
 </head>
 <body>
 
-<button class="layui-btn layui-btn-small" onclick="addModule()">
-    <i class="layui-icon">&#xe608;</i> 添加
-</button>
+<shiro:hasRole name="admin">
+    <button class="layui-btn layui-btn-small" onclick="addModule()">
+        <i class="layui-icon">&#xe608;</i> 添加
+    </button>
 
-<div id="module_talbe" lay-filter="moduleTable"></div>
+    <div id="module_talbe" lay-filter="moduleTable"></div>
 
-<form id="edit_module" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
-    <div class="layui-form-item" style="display:none;">
-        <label class="layui-form-label">模块ID</label>
-        <div class="layui-input-block">
-            <input id="moduleId" class="layui-input" type="label" name="moduleId" autocomplete="off">
+    <form id="edit_module" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
+        <div class="layui-form-item" style="display:none;">
+            <label class="layui-form-label">模块ID</label>
+            <div class="layui-input-block">
+                <input id="moduleId" class="layui-input" type="label" name="moduleId" autocomplete="off">
+            </div>
         </div>
-    </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块名称</label>
+            <div class="layui-input-block">
+                <input id="name" class="layui-input" type="text" name="name" lay-verify="required" autocomplete="off"
+                       placeholder="请输入模块名称">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">访问地址</label>
+            <div class="layui-input-block">
+                <input id="address" class="layui-input" type="text" name="address" lay-verify="required"
+                       autocomplete="off"
+                       placeholder="请输入访问地址">
+            </div>
+        </div>
+
+        <div class="layui-form-item" pane="">
+            <label class="layui-form-label">是否删除</label>
+            <div class="layui-input-block">
+                <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch"
+                       lay-filter="switchModule"
+                       lay-text="是|否" value="1">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea id="remarks" placeholder="请输入内容" name="remarks" class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </form>
+</shiro:hasRole>
+<shiro:lacksRole name="admin">
     <div class="layui-form-item">
-        <label class="layui-form-label">模块名称</label>
-        <div class="layui-input-block">
-            <input id="name" class="layui-input" type="text" name="name" lay-verify="required" autocomplete="off"
-                   placeholder="请输入模块名称">
-        </div>
+        <label class="layui-form-label">无权查看</label>
     </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">访问地址</label>
-        <div class="layui-input-block">
-            <input id="address" class="layui-input" type="text" name="address" lay-verify="required" autocomplete="off"
-                   placeholder="请输入访问地址">
-        </div>
-    </div>
-
-    <div class="layui-form-item" pane="">
-        <label class="layui-form-label">是否删除</label>
-        <div class="layui-input-block">
-            <input id="del_flag" type="checkbox" checked="" name="del_flag" lay-skin="switch" lay-filter="switchModule"
-                   lay-text="是|否" value="1">
-        </div>
-    </div>
-
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">备注</label>
-        <div class="layui-input-block">
-            <textarea id="remarks" placeholder="请输入内容" name="remarks" class="layui-textarea"></textarea>
-        </div>
-    </div>
-</form>
-
+</shiro:lacksRole>
 <script type="text/html" id="barTool">
     <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="del">删除</a>

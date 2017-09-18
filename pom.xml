@@ -166,6 +166,12 @@
             <version>2.9.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
 
     </dependencies>
     <build>
@@ -204,6 +210,9 @@
             <properties>
                 <env>develop</env>
             </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault><!--默认启用的是dev环境配置-->
+            </activation>
         </profile>
         <!-- 生产环境 -->
         <profile>
@@ -218,9 +227,6 @@
             <properties>
                 <env>test</env>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault><!--默认启用的是dev环境配置-->
-            </activation>
         </profile>
     </profiles>
 

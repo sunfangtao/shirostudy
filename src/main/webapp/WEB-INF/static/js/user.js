@@ -254,11 +254,10 @@ function roleInit(userId) {
                 start += "<input type=\"checkbox\" lay-skin=\"primary\" id=\"";
 
                 for (var i = 0; i < json.length; i++) {
-                    start += (json[i].id + "\"");
                     var content = "";
                     content += ("<span>" + json[i].name + "</span></div>");
                     content += "<div class=\"sy-colla-blank0px\"></div></div>";
-                    html += (start + (json[i].isHas ? " checked>" : ">") + content);
+                    html += (start + json[i].id + "\"" + (json[i].isHas ? " checked>" : ">") + content);
                 }
                 console.info(html);
                 $('#edit_userrole_tree').html(html);
