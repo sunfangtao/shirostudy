@@ -7,6 +7,7 @@ public class AppPermission {
     private String remarks;//'备注信息',
     private String url;//'链接地址',
     private String type;//'链接映射标识'
+    private String module_id;
 
     public String getId() {
         return id;
@@ -46,5 +47,13 @@ public class AppPermission {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getModule_id() {
+        return module_id;
+    }
+
+    public void setModule_id(String module_id) {
+        this.module_id = module_id;
     }
 }

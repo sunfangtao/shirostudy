@@ -118,7 +118,7 @@ function deleteUser(obj) {
             url: ctx + "/user/updateUser",
             async: false,
             data: {
-                moduleId: obj.data.id,
+                userId: obj.data.id,
                 del_flag: 1
             },
             error: function (request) {

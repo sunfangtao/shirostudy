@@ -1,4 +1,33 @@
 /**
+ * 初始化模块下拉
+ */
+function selectionInitA() {
+    var $ = layui.jquery;
+
+    $.ajax({
+        type: 'post',
+        url: ctx + "/module/getAllModule",
+        async: false,
+        dataType: 'json',
+        data: {
+            isAll: true
+        },
+        error: function (request) {
+            layer.msg("模块获取失败!", {time: 1500});
+        },
+        success: function (data) {
+            var moduleArr = data.data;
+            for (var i = 0; i < moduleArr.length; i++) {
+                var result = moduleArr[i];
+                $("#module_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
+            }
+            var form = layui.form;
+            form.render('select');
+        }
+    });
+}
+
+/**
  * 重新渲染角色表格
  */
 function reloadTable() {
@@ -86,6 +115,7 @@ function editPermission(obj) {
                             is_user: $("#is_user").prop('checked') ? 1 : 0,
                             url: $("#url").val(),
                             type: $("#type").val(),
+                            module_id: $("#module_type").val(),
                         });
                         layer.close(index);
                         layer.msg(data.data.info, {time: 800});
@@ -100,6 +130,7 @@ function editPermission(obj) {
         },
         success: function (layero, index) {
             $("#id").val(obj.data.id);
+            $("#module_type").val(obj.data.module_id);
             $("#url").val(obj.data.url);
             $("#type").val(obj.data.type);
             $("#remarks").val(obj.data.remarks);

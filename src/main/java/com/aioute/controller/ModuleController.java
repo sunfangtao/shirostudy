@@ -3,10 +3,7 @@ package com.aioute.controller;
 import com.aioute.service.ModuleService;
 import com.sft.model.Module;
 import com.sft.model.bean.ModuleBean;
-import com.sft.util.CloudError;
-import com.sft.util.PagingUtil;
-import com.sft.util.SendAppJSONUtil;
-import com.sft.util.SendPlatJSONUtil;
+import com.sft.util.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -68,7 +65,7 @@ public class ModuleController {
      */
     @ResponseBody
     @RequestMapping("updateModule")
-    public String updateModule(String moduleId, String name, String remarks, String del_flag, String address) {
+    public String updateModule(String moduleId, String name, String remarks, String del_flag, String address, HttpServletRequest req, HttpServletResponse res) {
         Module module = new Module();
         if (StringUtils.hasText(moduleId)) {
             module.setId(moduleId);

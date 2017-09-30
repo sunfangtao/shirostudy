@@ -24,7 +24,7 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
         Connection con = null;
         PreparedStatement ps = null;
         StringBuffer sb = new StringBuffer();
-        sb.append("insert into app_permission (id,remarks,type,url,is_user) values (?,?,?,?,?)");
+        sb.append("insert into app_permission (id,remarks,type,url,is_user,server_id) values (?,?,?,?,?,?)");
         try {
             con = sqlConnectionFactory.getConnection();
             ps = con.prepareStatement(sb.toString());
@@ -33,6 +33,7 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
             ps.setString(3, appPermission.getType());
             ps.setString(4, appPermission.getUrl());
             ps.setInt(5, appPermission.getIs_user());
+            ps.setString(6, appPermission.getModule_id());
             int result = ps.executeUpdate();
             if (result > 0) {
                 return true;
@@ -63,6 +64,9 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
         }
         if (appPermission.getUrl() != null) {
             sb.append(", url = '").append(appPermission.getUrl()).append("'");
+        }
+        if (appPermission.getModule_id() != null) {
+            sb.append(", server_id = '").append(appPermission.getModule_id()).append("'");
         }
         sb.append(" where id = ?");
 
@@ -114,6 +118,7 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
             }
         }
 
+        sb.append(" order by url desc");
         if (page > 0 && pageSize > 0) {
             sb.append(" limit ");
             sb.append((page - 1) * pageSize).append(",").append(pageSize);
@@ -130,6 +135,7 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
                 permission.setType(rs.getString("type"));
                 permission.setId(rs.getString("id"));
                 permission.setIs_user(rs.getInt("is_user"));
+                permission.setModule_id(rs.getString("server_id"));
                 permissionsList.add(permission);
             }
         } catch (Exception e) {

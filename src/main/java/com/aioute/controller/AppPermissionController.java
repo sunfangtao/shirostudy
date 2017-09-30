@@ -37,15 +37,20 @@ public class AppPermissionController {
      */
     @ResponseBody
     @RequestMapping("addAppPermission")
-    public String addAppPermission(String type, String remarks, String url, String is_user) {
+    public String addAppPermission(String type, String remarks, String url, String is_user, String moduleId) {
         String returnStr = "";
         AppPermission appPermission = new AppPermission();
 
         if (StringUtils.hasText(remarks)) {
             appPermission.setRemarks(remarks);
         }
-        if (StringUtils.hasText(is_user)&&is_user.equals("1")) {
+        if (StringUtils.hasText(is_user) && is_user.equals("1")) {
             appPermission.setIs_user(1);
+        }
+        if (StringUtils.hasText(moduleId)) {
+            appPermission.setModule_id(moduleId);
+        } else {
+            return SendAppJSONUtil.getRequireParamsMissingObject("必须填写模块!");
         }
         if (StringUtils.hasText(url)) {
             appPermission.setUrl(url);
@@ -71,7 +76,7 @@ public class AppPermissionController {
     }
 
     /**
-     * 更新角色 done
+     * 更新 done
      *
      * @param req
      * @param res
@@ -87,6 +92,7 @@ public class AppPermissionController {
             String remarks = req.getParameter("remarks");
             String url = req.getParameter("url");
             String is_user = req.getParameter("is_user");
+            String module_Id = req.getParameter("moduleId");
             if (StringUtils.hasText(type)) {
                 appPermission.setType(type);
             }
@@ -98,6 +104,9 @@ public class AppPermissionController {
             }
             if (StringUtils.hasText(is_user) && !is_user.equals("0")) {
                 appPermission.setIs_user(1);
+            }
+            if (StringUtils.hasText(module_Id)) {
+                appPermission.setModule_id(module_Id);
             }
             if (appPermissionService.updateAppPermission(appPermission)) {
                 return SendAppJSONUtil.getNormalString("更新成功!");
@@ -112,7 +121,7 @@ public class AppPermissionController {
     }
 
     /**
-     * 获取系统所有权限
+     * 获取所有权限
      *
      * @param req
      * @param res

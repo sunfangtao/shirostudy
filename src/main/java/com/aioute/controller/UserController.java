@@ -38,6 +38,7 @@ public class UserController {
         String name = req.getParameter("name");
         String phone = req.getParameter("phone");
         String remarks = req.getParameter("remarks");
+        String del_flag = req.getParameter("del_flag");
 
         if (!StringUtils.hasText(login_name)) {
             return SendAppJSONUtil.getRequireParamsMissingObject("请输入账号!");
@@ -59,6 +60,11 @@ public class UserController {
         userModel.setCreate_by("1");
         userModel.setCreate_date(DateUtil.getCurDate());
         userModel.setRemarks(remarks);
+        if (StringUtils.hasText(del_flag)) {
+            if (!"0".equals(del_flag)) {
+                userModel.setDel_flag(1);
+            }
+        }
 
         if (userService.addUser(userModel)) {
             return SendAppJSONUtil.getNormalString("操作成功!");
@@ -102,6 +108,7 @@ public class UserController {
         String phone = req.getParameter("phone");
         String remarks = req.getParameter("remarks");
         String userId = req.getParameter("userId");
+        String del_flag = req.getParameter("del_flag");
         String loginUserId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
 
         UserModel userModel = new UserModel();
@@ -111,6 +118,12 @@ public class UserController {
         userModel.setName(name);
         userModel.setPhone(phone);
         userModel.setRemarks(remarks);
+        if (StringUtils.hasText(del_flag)) {
+            if (!"0".equals(del_flag)) {
+                userModel.setDel_flag(1);
+            }
+        }
+
 
         if (userService.updateUser(userModel, loginUserId)) {
             return SendAppJSONUtil.getNormalString("更新成功！");

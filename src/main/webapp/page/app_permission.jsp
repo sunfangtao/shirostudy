@@ -36,6 +36,15 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label">所属模块</label>
+        <div class="layui-input-block">
+            <select id="module_type" name="moduleId" lay-filter="module_type">
+                <option value="">请选择模块</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
         <label class="layui-form-label">资源地址</label>
         <div class="layui-input-block">
             <input id="url" class="layui-input" type="text" name="url" lay-verify="required" autocomplete="off"
@@ -127,7 +136,9 @@
             }
         });
 
+        selectionInitA();
     });
+
 </script>
 <script src="${ctx}/static/js/app_permission.js" charset="utf-8"></script>
 

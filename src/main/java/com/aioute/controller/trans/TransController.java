@@ -26,14 +26,15 @@ public class TransController {
      */
     @RequestMapping("plat")
     public void transPlat(HttpServletRequest req, HttpServletResponse res) {
-        String type = req.getParameter("type");
+        String type = req.getParameter("transType");
         String url = permissionService.getUrlByType(type);
         if (StringUtils.hasText(url)) {
+            req.getParameterMap().remove("transType");
             new HttpClient(req, res).send(permissionService.getUrlByType(type));
         } else {
             // 转发失败
             try {
-                String returnJson = SendAppJSONUtil.getRequireParamsMissingObject("没有type");
+                String returnJson = SendAppJSONUtil.getRequireParamsMissingObject("没有transType");
                 res.getWriter().write(returnJson);
             } catch (Exception e) {
                 e.printStackTrace();
