@@ -284,7 +284,7 @@ public class RolePermissionController {
 
         if (rolePermissionService.addPermission(permission)) {
             if (StringUtils.hasText(url)) {
-                urlPermissionUtil.updateUrlPermission(req.getCookies());
+                urlPermissionUtil.updateUrlPermission();
             }
             return SendAppJSONUtil.getNormalString("添加成功!");
         } else {
@@ -337,7 +337,7 @@ public class RolePermissionController {
             String userId = (String) SecurityUtils.getSubject().getSession().getAttribute("userId");
             if (rolePermissionService.updatePermission(permission, userId)) {
                 if (StringUtils.hasText(url)) {
-                    urlPermissionUtil.updateUrlPermission(req.getCookies());
+                    urlPermissionUtil.updateUrlPermission();
                 }
                 return SendAppJSONUtil.getNormalString("更新成功!");
             } else {

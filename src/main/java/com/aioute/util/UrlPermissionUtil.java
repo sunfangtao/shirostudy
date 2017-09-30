@@ -2,7 +2,6 @@ package com.aioute.util;
 
 import com.aioute.service.ModuleService;
 import com.sft.model.bean.ModuleBean;
-import com.sft.service.RoleService;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,7 +14,6 @@ import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import java.util.List;
 
 @Service
@@ -23,38 +21,35 @@ public class UrlPermissionUtil {
 
     @Resource
     private ModuleService moduleService;
-    @Resource
-    private RoleService roleService;
-
     /**
      * 更新资源权限
      */
-    public void updateUrlPermission(final Cookie[] cookies) {
-        new Thread(new Runnable() {
-            public void run() {
-                List<ModuleBean> moduleList = moduleService.getAllModule(null, 0, 0);
-                if (moduleList != null) {
-                    int length = moduleList.size();
-                    for (int i = 0; i < length; i++) {
-                        String url = moduleList.get(i).getAddress() + "uController/resourceCache";
-                        sendGet(url, null);
-                    }
-                }
-            }
-        }).start();
+    public void updateUrlPermission() {
+        getUrlAndSendGet("uController/resourceCache", null);
     }
 
     /**
      * 更新用户权限
      */
     public void updateUserPermission(final String account) {
+        getUrlAndSendGet("uController/shiroCache", account);
+    }
+
+    /**
+     * 更新APP访问权限
+     */
+    public void updateAppPermission() {
+        getUrlAndSendGet("trans/updatePermission", null);
+    }
+
+    private void getUrlAndSendGet(final String address, final String account) {
         new Thread(new Runnable() {
             public void run() {
                 List<ModuleBean> moduleList = moduleService.getAllModule(null, 0, 0);
                 if (moduleList != null) {
                     int length = moduleList.size();
                     for (int i = 0; i < length; i++) {
-                        String url = moduleList.get(i).getAddress() + "uController/shiroCache";
+                        String url = moduleList.get(i).getAddress() + address;
                         sendGet(url, account);
                     }
                 }

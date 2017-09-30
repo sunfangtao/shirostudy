@@ -2,6 +2,7 @@ package com.aioute.controller;
 
 import com.aioute.model.AppPermission;
 import com.aioute.service.AppPermissionService;
+import com.aioute.util.UrlPermissionUtil;
 import com.sft.util.CloudError;
 import com.sft.util.PagingUtil;
 import com.sft.util.SendAppJSONUtil;
@@ -25,6 +26,8 @@ public class AppPermissionController {
 
     @Resource
     private AppPermissionService appPermissionService;
+    @Resource
+    private UrlPermissionUtil urlPermissionUtil;
 
     /**
      * 新建
@@ -67,6 +70,7 @@ public class AppPermissionController {
         boolean result = appPermissionService.addAppPermission(appPermission);
         if (result) {
             // 操作成功
+            urlPermissionUtil.updateAppPermission();
             returnStr = SendAppJSONUtil.getNormalString("创建成功!");
         } else {
             // 角色名称不能重复
@@ -109,6 +113,7 @@ public class AppPermissionController {
                 appPermission.setModule_id(module_Id);
             }
             if (appPermissionService.updateAppPermission(appPermission)) {
+                urlPermissionUtil.updateAppPermission();
                 return SendAppJSONUtil.getNormalString("更新成功!");
             } else {
                 // 角色名称不能重复
