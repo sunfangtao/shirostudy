@@ -36,7 +36,7 @@
     </ul>
 </div>
 
-<iframe id="iframe" style="border: none" width="100%" height="700px"
+<iframe id="iframe" style="border: none" width="100%" height="800px"
         <shiro:hasRole name="admin">
             src= "${ctx}/page/role.jsp"
         </shiro:hasRole>

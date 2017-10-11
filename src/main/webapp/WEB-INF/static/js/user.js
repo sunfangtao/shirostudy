@@ -7,7 +7,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
     table.render({
         id: 'user_talbe',
         elem: '#user_talbe', // 指定原始表格元素选择器（推荐id选择器）
-        height: 500, // 容器高度
+        height: 700, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
             {field: 'name', title: '名称', width: 200, align: 'center'},
@@ -23,7 +23,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
             pageName: 'page', // 页码的参数名称，默认：page
             limitName: 'pageSize' // 每页数据量的参数名，默认：limit
         },
-        limit: 10,
+        limit: 15,
         even: true,
         page: true,
         limits: [10, 15, 20],

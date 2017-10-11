@@ -7,14 +7,14 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
     table.render({
         id: 'permission_table',
         elem: '#permission_table', // 指定原始表格元素选择器（推荐id选择器）
-        height: 500, // 容器高度
+        height: 700, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
             {field: 'name', title: '权限别名', width: 200, align: 'center'},
-            {field: 'permission', title: '权限标识', width: 240, align: 'center'},
-            {field: 'url', title: '资源地址', width: 240, align: 'center'},
-            {field: 'type', title: '映射标识', width: 200, align: 'center'},
-            {field: 'module', title: '模块名称', width: 200, align: 'center'},
+            {field: 'permission', title: '权限标识', width: 300, align: 'center'},
+            {field: 'url', title: '资源地址', width: 300, align: 'center'},
+            {field: 'type', title: '映射标识', width: 300, align: 'center'},
+            {field: 'module', title: '模块名称', width: 240, align: 'center'},
             // {field: 'create_by', title: '创建者', width: 200, align: 'center'},
             // {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
             // {field: 'update_by', title: '更新者', width: 200, align: 'center'},
@@ -27,7 +27,7 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
             pageName: 'page', // 页码的参数名称，默认：page
             limitName: 'pageSize' // 每页数据量的参数名，默认：limit
         },
-        limit: 10,
+        limit: 15,
         even: true,
         page: true,
         limits: [10, 15, 20],

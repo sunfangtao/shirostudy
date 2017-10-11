@@ -7,21 +7,21 @@ layui.use(['table', 'layer', 'form', 'element'], function () {
     table.render({
         id: 'role_talbe',
         elem: '#role_talbe', // 指定原始表格元素选择器（推荐id选择器）
-        height: 500, // 容器高度
+        height: 700, // 容器高度
         cols: [[
             // {field: 'id', title: 'ID', width: 150, align: 'center'},
             {field: 'name', title: '角色名', width: 300, align: 'center'},
             {field: 'create_name', title: '创建者', width: 200, align: 'center'},
             {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
             {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
-            {field: 'remarks', title: '备注', width: 200, align: 'center'},
+            {field: 'remarks', title: '备注', width: 400, align: 'center'},
             {fixed: 'right', width: 200, align: 'center', toolbar: '#barTool'}
         ]], // 设置表头
         request: {
             pageName: 'page', // 页码的参数名称，默认：page
             limitName: 'pageSize' // 每页数据量的参数名，默认：limit
         },
-        limit: 10,
+        limit: 15,
         even: true,
         page: true,
         limits: [10, 15, 20],

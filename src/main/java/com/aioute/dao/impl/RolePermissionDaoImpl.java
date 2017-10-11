@@ -500,7 +500,7 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
                 sb.append(" and p.permission like %").append(permission).append("%");
             }
             String moduleId = whereMap.get("moduleId");
-            if (StringUtils.hasText(permission)) {
+            if (StringUtils.hasText(moduleId)) {
                 sb.append(" and p.module_id ='").append(moduleId).append("'");
             }
         }

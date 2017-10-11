@@ -102,7 +102,7 @@
         table.render({
             id: 'permission_table',
             elem: '#permission_table', // 指定原始表格元素选择器（推荐id选择器）
-            height: 500, // 容器高度
+            height: 700, // 容器高度
             cols: [[
                 // {field: 'id', title: 'ID', width: 150, align: 'center'},
                 {field: 'type', title: '映射标识', width: 200, align: 'center'},
@@ -110,7 +110,7 @@
                 {field: 'url', title: '资源地址', width: 240, align: 'center'},
                 </shiro:hasRole>
                 {field: 'is_user', title: '是否需要登录', width: 200, align: 'center', templet: '#validateTpl'},
-                {field: 'remarks', title: '备注', width: 400, align: 'center'},
+                {field: 'remarks', title: '备注', width: 700, align: 'center'},
                 <shiro:hasRole name="admin">
                 {fixed: 'right', width: 150, align: 'center', toolbar: '#barTool'}
                 </shiro:hasRole>
@@ -119,7 +119,7 @@
                 pageName: 'page', // 页码的参数名称，默认：page
                 limitName: 'pageSize' // 每页数据量的参数名，默认：limit
             },
-            limit: 10,
+            limit: 15,
             even: true,
             page: true,
             limits: [10, 15, 20],
