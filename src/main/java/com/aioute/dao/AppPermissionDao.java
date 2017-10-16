@@ -1,6 +1,7 @@
 package com.aioute.dao;
 
 import com.aioute.model.AppPermission;
+import com.aioute.model.bean.AppPermissionBean;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public interface AppPermissionDao {
      *
      * @return
      */
-    public List<AppPermission> getAppPermissions(Map<String, String> whereMap, int page, int pageSize);
+    public List<AppPermissionBean> getAppPermissions(Map<String, String> whereMap, int page, int pageSize);
 
     public int getPermissionCount(Map<String, String> whereMap);
 }

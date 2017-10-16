@@ -1,6 +1,7 @@
 package com.aioute.service;
 
 import com.aioute.model.AppPermission;
+import com.aioute.model.bean.AppPermissionBean;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public interface AppPermissionService {
      *
      * @return
      */
-    public List<AppPermission> getAppPermissions(Map<String, String> whereMap, int page, int pageSize);
+    public List<AppPermissionBean> getAppPermissions(Map<String, String> whereMap, int page, int pageSize);
 
     /**
      * 数目

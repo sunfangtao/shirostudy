@@ -34,9 +34,12 @@ function reloadTable() {
     var table = layui.table;
     var $ = layui.jquery;
     table.reload('permission_table', {
-        limit: 10,
+        limit: 15,
         even: true,
         page: true,
+        where: {
+            type: $('#selecttype').val()
+        }
     });
 }
 

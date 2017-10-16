@@ -20,29 +20,32 @@
 
 <div class="layui-form-item">
     <ul class="layui-nav" lay-filter="nav_bar">
-        <shiro:hasRole name="admin">
-            <li class="layui-nav-item layui-this"><a>角色管理</a></li>
+        <shiro:hasPermission name="roleManager">
+            <li class="layui-nav-item"><a>角色管理</a></li>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="permissionManager">
             <li class="layui-nav-item"><a>权限管理</a></li>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="moduleManager">
             <li class="layui-nav-item"><a>模块管理</a></li>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="userManager">
             <li class="layui-nav-item"><a>用户管理</a></li>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="appConnectManager">
             <li class="layui-nav-item"><a>APP连接管理</a></li>
-        </shiro:hasRole>
-        <shiro:hasRole name="appdevelop">
-            <shiro:lacksRole name="admin">
-                <li class="layui-nav-item layui-this"><a>APP连接管理</a></li>
-            </shiro:lacksRole>
-        </shiro:hasRole>
+        </shiro:hasPermission>
         <li class="layui-nav-item"><a href="${ctx}/logout">退出</a></li>
     </ul>
 </div>
 
 <iframe id="iframe" style="border: none" width="100%" height="800px"
-        <shiro:hasRole name="admin">
-            src= "${ctx}/page/role.jsp"
-        </shiro:hasRole>
-        <shiro:hasRole name="appdevelop">
-            src= "${ctx}/page/app_permission.jsp"
-        </shiro:hasRole>
+        <%--<shiro:hasRole name="admin">--%>
+            <%--src= "${ctx}/page/role.jsp"--%>
+        <%--</shiro:hasRole>--%>
+        <%--<shiro:hasRole name="appdevelop">--%>
+            <%--src= "${ctx}/page/app_permission.jsp"--%>
+        <%--</shiro:hasRole>--%>
 ></iframe>
 
 <script src="${ctx}/static/layui/layui.js" charset="utf-8"></script>

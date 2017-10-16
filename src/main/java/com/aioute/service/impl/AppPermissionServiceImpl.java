@@ -2,6 +2,7 @@ package com.aioute.service.impl;
 
 import com.aioute.dao.AppPermissionDao;
 import com.aioute.model.AppPermission;
+import com.aioute.model.bean.AppPermissionBean;
 import com.aioute.service.AppPermissionService;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +24,7 @@ public class AppPermissionServiceImpl implements AppPermissionService {
         return appPermissionDao.updateAppPermission(appPermission);
     }
 
-    public List<AppPermission> getAppPermissions(Map<String, String> whereMap, int page, int pageSize) {
+    public List<AppPermissionBean> getAppPermissions(Map<String, String> whereMap, int page, int pageSize) {
         return appPermissionDao.getAppPermissions(whereMap, page, pageSize);
     }
 

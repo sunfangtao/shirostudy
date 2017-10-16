@@ -2,6 +2,7 @@ package com.aioute.dao.impl;
 
 import com.aioute.dao.AppPermissionDao;
 import com.aioute.model.AppPermission;
+import com.aioute.model.bean.AppPermissionBean;
 import com.sft.db.SqlConnectionFactory;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -86,39 +87,32 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
         return false;
     }
 
-    public List<AppPermission> getAppPermissions(Map<String, String> whereMap, int page, int pageSize) {
+    public List<AppPermissionBean> getAppPermissions(Map<String, String> whereMap, int page, int pageSize) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<AppPermission> permissionsList = new ArrayList<AppPermission>();
+        List<AppPermissionBean> permissionsList = new ArrayList<AppPermissionBean>();
 
         StringBuffer sb = new StringBuffer();
-        sb.append("select * from app_permission");
+        sb.append("select a.*,s.name from app_permission a,sub_server s where s.id = a.server_id");
         if (whereMap != null) {
             String is_user = whereMap.get("is_user");
             if ("0".equals(is_user) || "1".equals(is_user)) {
-                sb.append(" where is_user = ").append(is_user);
+                sb.append(" and a.is_user = ").append(is_user);
             }
 
             String url = whereMap.get("url");
             if (StringUtils.hasText(url)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and url like %").append(url).append("%");
-                } else {
-                    sb.append(" where url like %").append(url).append("%");
-                }
+                sb.append(" and a.url like '%").append(url).append("%'");
             }
+
             String type = whereMap.get("type");
             if (StringUtils.hasText(type)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and type like %").append(type).append("%");
-                } else {
-                    sb.append(" where type like %").append(type).append("%");
-                }
+                sb.append(" and a.type like '%").append(type).append("%'");
             }
         }
 
-        sb.append(" order by url desc");
+        sb.append(" order by a.url desc");
         if (page > 0 && pageSize > 0) {
             sb.append(" limit ");
             sb.append((page - 1) * pageSize).append(",").append(pageSize);
@@ -129,13 +123,14 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
             ps = con.prepareStatement(sb.toString());
             rs = ps.executeQuery();
             while (rs.next()) {
-                AppPermission permission = new AppPermission();
+                AppPermissionBean permission = new AppPermissionBean();
                 permission.setRemarks(rs.getString("remarks"));
                 permission.setUrl(rs.getString("url"));
                 permission.setType(rs.getString("type"));
                 permission.setId(rs.getString("id"));
                 permission.setIs_user(rs.getInt("is_user"));
                 permission.setModule_id(rs.getString("server_id"));
+                permission.setModule(rs.getString("name"));
                 permissionsList.add(permission);
             }
         } catch (Exception e) {

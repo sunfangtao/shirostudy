@@ -421,7 +421,9 @@ public class RolePermissionController {
         whereMap.put("type", req.getParameter("type"));
         whereMap.put("permission", req.getParameter("permission"));
         whereMap.put("del_flag", req.getParameter("del_flag"));
-        whereMap.put("moduleId", req.getParameter("moduleId"));
+        if (!"0".equals(req.getParameter("moduleId"))) {
+            whereMap.put("moduleId", req.getParameter("moduleId"));
+        }
         List<PermissionBean> permissionList = rolePermissionService.getPermissions(whereMap, page, pageSize);
         int count = rolePermissionService.getPermissionCount(whereMap);
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);

@@ -13,19 +13,37 @@
 </head>
 <body>
 
-<shiro:hasRole name="admin">
-    <div class="layui-form">
-        <div class="layui-form-item">
+
+<div class="layui-form">
+    <div class="layui-form-item">
+
+        <shiro:hasPermission name="appPermission/getAllAppPermissions">
+            <label class="layui-form-label">资源地址</label>
+            <div class="layui-input-inline">
+                <input id="selecttype" class="layui-input" type="text" name="selecttype" lay-verify="required"
+                       autocomplete="off"
+                       placeholder="请输入资源地址">
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-small" onclick="reloadTable()">
+                    <i class="layui-icon">&#xe608;</i> 搜索
+                </button>
+            </div>
+        </shiro:hasPermission>
+
+        <shiro:hasPermission name="appPermission/addAppPermission">
             <div class="layui-inline">
                 <button class="layui-btn layui-btn-small" onclick="addAppPermission()">
                     <i class="layui-icon">&#xe608;</i> 添加
                 </button>
             </div>
-        </div>
+        </shiro:hasPermission>
     </div>
-</shiro:hasRole>
+</div>
 
-<div id="permission_table" lay-filter="permissionTable"></div>
+<shiro:hasPermission name="appPermission/getAllAppPermissions">
+    <div id="permission_table" lay-filter="permissionTable"></div>
+</shiro:hasPermission>
 
 <form id="edit_permission" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
     <div class="layui-form-item" style="display:none;">
@@ -98,6 +116,7 @@
         var $ = layui.jquery;
         var form = layui.form;
 
+        <shiro:hasPermission name="appPermission/getAllAppPermissions">
         // 执行渲染
         table.render({
             id: 'permission_table',
@@ -106,14 +125,15 @@
             cols: [[
                 // {field: 'id', title: 'ID', width: 150, align: 'center'},
                 {field: 'type', title: '映射标识', width: 200, align: 'center'},
-                <shiro:hasRole name="admin">
+                <shiro:hasPermission name="appPermission/updateAppPermission">
                 {field: 'url', title: '资源地址', width: 240, align: 'center'},
-                </shiro:hasRole>
+                {field: 'module', title: '所属模块', width: 240, align: 'center'},
+                </shiro:hasPermission>
                 {field: 'is_user', title: '是否需要登录', width: 200, align: 'center', templet: '#validateTpl'},
                 {field: 'remarks', title: '备注', width: 700, align: 'center'},
-                <shiro:hasRole name="admin">
+                <shiro:hasPermission name="appPermission/updateAppPermission">
                 {fixed: 'right', width: 150, align: 'center', toolbar: '#barTool'}
-                </shiro:hasRole>
+                </shiro:hasPermission>
             ]], // 设置表头
             request: {
                 pageName: 'page', // 页码的参数名称，默认：page
@@ -124,8 +144,13 @@
             page: true,
             limits: [10, 15, 20],
             url: ctx + '/appPermission/getAllAppPermissions',
+            where: {
+                type: $('#selecttype').val()
+            }
         });
+        </shiro:hasPermission>
 
+        <shiro:hasPermission name="appPermission/updateAppPermission">
         table.on('tool(permissionTable)', function (obj) {
             if (obj.event == 'del') {
                 // 设置权限无效
@@ -135,11 +160,12 @@
                 editPermission(obj);
             }
         });
+        </shiro:hasPermission>
 
         selectionInitA();
     });
-
 </script>
+
 <script src="${ctx}/static/js/app_permission.js" charset="utf-8"></script>
 
 

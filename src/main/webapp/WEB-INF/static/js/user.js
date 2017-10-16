@@ -1,49 +1,3 @@
-layui.use(['table', 'layer', 'form', 'element'], function () {
-    var table = layui.table;
-    var $ = layui.jquery;
-    var form = layui.form;
-
-    // 执行渲染
-    table.render({
-        id: 'user_talbe',
-        elem: '#user_talbe', // 指定原始表格元素选择器（推荐id选择器）
-        height: 700, // 容器高度
-        cols: [[
-            // {field: 'id', title: 'ID', width: 150, align: 'center'},
-            {field: 'name', title: '名称', width: 200, align: 'center'},
-            {field: 'login_name', title: '账号', width: 300, align: 'center'},
-            // {field: 'password', title: '密码', width: 200, align: 'center'},
-            {field: 'phone', title: '电话', width: 200, align: 'center'},
-            {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
-            {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
-            {field: 'remarks', title: '备注', width: 200, align: 'center'},
-            {fixed: 'right', width: 200, align: 'center', toolbar: '#barTool'}
-        ]], // 设置表头
-        request: {
-            pageName: 'page', // 页码的参数名称，默认：page
-            limitName: 'pageSize' // 每页数据量的参数名，默认：limit
-        },
-        limit: 15,
-        even: true,
-        page: true,
-        limits: [10, 15, 20],
-        url: ctx + '/user/getUser',
-    });
-
-    table.on('tool(userTable)', function (obj) {
-        if (obj.event == 'del') {
-            // 设置模块无效
-            deleteUser(obj);
-        } else if (obj.event == 'upd') {
-            // 编辑用户角色
-            updateUserRole(obj);
-        } else {
-            // 编辑模块
-            editUser(obj);
-        }
-    });
-});
-
 /**
  * 重新渲染模块表格
  */
@@ -51,7 +5,7 @@ function reloadTable() {
     var table = layui.table;
     var $ = layui.jquery;
     table.reload('user_talbe', {
-        limit: 10,
+        limit: 15,
         even: true,
         page: true,
     });

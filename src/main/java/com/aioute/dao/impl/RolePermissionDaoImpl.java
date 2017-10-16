@@ -120,7 +120,7 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
         Connection con = null;
         PreparedStatement ps = null;
         StringBuffer sb = new StringBuffer();
-        sb.append("insert into user_role (roleId,userId,create_by,create_date) values (?,?,?,?)");
+        sb.append("insert into user_role (role_id,user_id,create_by,create_date) values (?,?,?,?)");
 
         try {
             con = sqlConnectionFactory.getConnection();

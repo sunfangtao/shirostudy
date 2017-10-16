@@ -1,6 +1,7 @@
 package com.aioute.controller;
 
 import com.aioute.model.AppPermission;
+import com.aioute.model.bean.AppPermissionBean;
 import com.aioute.service.AppPermissionService;
 import com.aioute.util.UrlPermissionUtil;
 import com.sft.util.CloudError;
@@ -139,7 +140,7 @@ public class AppPermissionController {
         Map<String, String> whereMap = new HashMap<String, String>();
         whereMap.put("url", req.getParameter("url"));
         whereMap.put("type", req.getParameter("type"));
-        List<AppPermission> permissionList = appPermissionService.getAppPermissions(whereMap, page, pageSize);
+        List<AppPermissionBean> permissionList = appPermissionService.getAppPermissions(whereMap, page, pageSize);
         int count = appPermissionService.getPermissionCount(whereMap);
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);
     }
