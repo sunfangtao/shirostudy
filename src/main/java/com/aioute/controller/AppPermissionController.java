@@ -140,6 +140,7 @@ public class AppPermissionController {
         Map<String, String> whereMap = new HashMap<String, String>();
         whereMap.put("url", req.getParameter("url"));
         whereMap.put("type", req.getParameter("type"));
+        whereMap.put("moduleId", req.getParameter("moduleId"));
         List<AppPermissionBean> permissionList = appPermissionService.getAppPermissions(whereMap, page, pageSize);
         int count = appPermissionService.getPermissionCount(whereMap);
         return SendPlatJSONUtil.getPageJsonString(0, "", count, permissionList);

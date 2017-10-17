@@ -18,6 +18,18 @@
     <div class="layui-form-item">
 
         <shiro:hasPermission name="appPermission/getAllAppPermissions">
+
+            <shiro:hasPermission name="module/getAllModule">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">所属模块</label>
+                    <div class="layui-input-block">
+                        <select id="module_select" name="moduleId" lay-filter="module_select">
+                            <option value="">请选择模块</option>
+                        </select>
+                    </div>
+                </div>
+            </shiro:hasPermission>
+
             <label class="layui-form-label">资源地址</label>
             <div class="layui-input-inline">
                 <input id="selecttype" class="layui-input" type="text" name="selecttype" lay-verify="required"
@@ -116,7 +128,6 @@
         var $ = layui.jquery;
         var form = layui.form;
 
-        <shiro:hasPermission name="appPermission/getAllAppPermissions">
         // 执行渲染
         table.render({
             id: 'permission_table',
@@ -145,12 +156,11 @@
             limits: [10, 15, 20],
             url: ctx + '/appPermission/getAllAppPermissions',
             where: {
-                type: $('#selecttype').val()
+                type: $('#selecttype').val(),
+                moduleId: $('#module_select').val()
             }
         });
-        </shiro:hasPermission>
 
-        <shiro:hasPermission name="appPermission/updateAppPermission">
         table.on('tool(permissionTable)', function (obj) {
             if (obj.event == 'del') {
                 // 设置权限无效
@@ -160,14 +170,16 @@
                 editPermission(obj);
             }
         });
-        </shiro:hasPermission>
+
+        form.on('select(module_select)', function (data) {
+            reloadTable();
+        });
 
         selectionInitA();
     });
 </script>
 
 <script src="${ctx}/static/js/app_permission.js" charset="utf-8"></script>
-
 
 </body>
 </html>

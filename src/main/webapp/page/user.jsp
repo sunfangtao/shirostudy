@@ -127,7 +127,6 @@
         var $ = layui.jquery;
         var form = layui.form;
 
-        <shiro:hasPermission name="user/getUser">
         // 执行渲染
         table.render({
             id: 'user_talbe',
@@ -142,9 +141,9 @@
                 {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
                 {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
                 {field: 'remarks', title: '备注', width: 200, align: 'center'},
-                <shiro:hasRole name="admin">
+                <shiro:hasPermission name="user/updateUser">
                 {fixed: 'right', width: 200, align: 'center', toolbar: '#barTool'}
-                </shiro:hasRole>
+                </shiro:hasPermission>
             ]], // 设置表头
             request: {
                 pageName: 'page', // 页码的参数名称，默认：page
@@ -156,9 +155,7 @@
             limits: [10, 15, 20],
             url: ctx + '/user/getUser',
         });
-        </shiro:hasPermission>
 
-        <shiro:hasPermission name="user/updateUser">
         table.on('tool(userTable)', function (obj) {
             if (obj.event == 'del') {
                 // 设置模块无效
@@ -171,7 +168,6 @@
                 editUser(obj);
             }
         });
-        </shiro:hasPermission>
     });
 </script>
 

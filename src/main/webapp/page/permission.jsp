@@ -31,11 +31,13 @@
                     <option value="1">无效</option>
                 </select>
             </div>
-            <div class="layui-inline" style="width: 160px">
-                <select id="module_select" lay-filter="module_select">
-                    <option value="0">请选择模块</option>
-                </select>
-            </div>
+            <shiro:hasPermission name="module/getAllModule">
+                <div class="layui-inline" style="width: 160px">
+                    <select id="module_select" lay-filter="module_select">
+                        <option value="0">请选择模块</option>
+                    </select>
+                </div>
+            </shiro:hasPermission>
         </shiro:hasPermission>
     </div>
 </div>

@@ -20,6 +20,7 @@ function selectionInitA() {
             for (var i = 0; i < moduleArr.length; i++) {
                 var result = moduleArr[i];
                 $("#module_type").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
+                $("#module_select").append("<option value=\"" + result.id + "\">" + result.name + "</option>");
             }
             var form = layui.form;
             form.render('select');
@@ -38,7 +39,8 @@ function reloadTable() {
         even: true,
         page: true,
         where: {
-            type: $('#selecttype').val()
+            type: $('#selecttype').val(),
+            moduleId: $('#module_select').val()
         }
     });
 }

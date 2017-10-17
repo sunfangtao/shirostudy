@@ -110,6 +110,11 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
             if (StringUtils.hasText(type)) {
                 sb.append(" and a.type like '%").append(type).append("%'");
             }
+
+            String moduleId = whereMap.get("moduleId");
+            if (StringUtils.hasText(moduleId)) {
+                sb.append(" and a.server_id = '").append(moduleId).append("'");
+            }
         }
 
         sb.append(" order by a.url desc");
@@ -149,24 +154,27 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
 
         sb.append("select count(1) as count from app_permission");
         if (whereMap != null) {
+            String is_user = whereMap.get("is_user");
+            if ("0".equals(is_user) || "1".equals(is_user)) {
+                sb.append(" and a.is_user = ").append(is_user);
+            }
+
             String url = whereMap.get("url");
             if (StringUtils.hasText(url)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and url like %").append(url).append("%");
-                } else {
-                    sb.append(" where url like %").append(url).append("%");
-                }
+                sb.append(" and a.url like '%").append(url).append("%'");
             }
 
             String type = whereMap.get("type");
             if (StringUtils.hasText(type)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and type like %").append(type).append("%");
-                } else {
-                    sb.append(" where type like %").append(type).append("%");
-                }
+                sb.append(" and a.type like '%").append(type).append("%'");
+            }
+
+            String moduleId = whereMap.get("moduleId");
+            if (StringUtils.hasText(moduleId)) {
+                sb.append(" and a.server_id = '").append(moduleId).append("'");
             }
         }
+
         try {
             con = sqlConnectionFactory.getConnection();
             ps = con.prepareStatement(sb.toString());

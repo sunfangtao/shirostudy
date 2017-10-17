@@ -578,46 +578,31 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
         ResultSet rs = null;
         StringBuffer sb = new StringBuffer();
 
-        sb.append("select count(1) as count from permission");
+        sb.append("select count(1) as count from permission where 1 = 1");
         if (whereMap != null) {
             String del_flag = whereMap.get("del_flag");
             if ("0".equals(del_flag) || "1".equals(del_flag)) {
-                sb.append(" where del_flag = ").append(del_flag);
+                sb.append(" and p.del_flag = ").append(del_flag);
             }
             String name = whereMap.get("name");
             if (StringUtils.hasText(name)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and name like %").append(name).append("%");
-                } else {
-                    sb.append(" where name like %").append(name).append("%");
-                }
+                sb.append(" and p.name like %").append(name).append("%");
             }
-
             String url = whereMap.get("url");
             if (StringUtils.hasText(url)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and url like %").append(url).append("%");
-                } else {
-                    sb.append(" where url like %").append(url).append("%");
-                }
+                sb.append(" and p.url like %").append(url).append("%");
             }
-
             String type = whereMap.get("type");
             if (StringUtils.hasText(type)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and type like %").append(type).append("%");
-                } else {
-                    sb.append(" where type like %").append(type).append("%");
-                }
+                sb.append(" and p.type like %").append(type).append("%");
             }
-
             String permission = whereMap.get("permission");
             if (StringUtils.hasText(permission)) {
-                if (sb.toString().contains("where")) {
-                    sb.append(" and permission like %").append(permission).append("%");
-                } else {
-                    sb.append(" where permission like %").append(permission).append("%");
-                }
+                sb.append(" and p.permission like %").append(permission).append("%");
+            }
+            String moduleId = whereMap.get("moduleId");
+            if (StringUtils.hasText(moduleId)) {
+                sb.append(" and module_id ='").append(moduleId).append("'");
             }
         }
         try {

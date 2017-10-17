@@ -34,7 +34,9 @@
     </shiro:hasPermission>
 </div>
 
-<div id="role_talbe" lay-filter="roleTable"></div>
+<shiro:hasPermission name="rolePermission/roles">
+    <div id="role_talbe" lay-filter="roleTable"></div>
+</shiro:hasPermission>
 
 <form id="edit_role" style="display:none;padding: 5px;" class="layui-form layui-form-pane">
     <div class="layui-form-item" style="display:none;">
@@ -116,7 +118,6 @@
         var $ = layui.jquery;
         var form = layui.form;
 
-        <shiro:hasPermission name="rolePermission/roles">
         // 执行渲染
         table.render({
             id: 'role_talbe',
@@ -151,8 +152,6 @@
             reloadTable();
         });
 
-        </shiro:hasPermission>
-
         table.on('tool(roleTable)', function (obj) {
             if (obj.event == 'upd') {
                 // 修改权限
@@ -165,7 +164,6 @@
                 editRole(obj);
             }
         });
-
     });
 
 </script>

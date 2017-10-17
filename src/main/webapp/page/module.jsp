@@ -89,7 +89,6 @@
         var $ = layui.jquery;
         var form = layui.form;
 
-        <shiro:hasPermission name="module/getAllModule">
         // 执行渲染
         table.render({
             id: 'module_talbe',
@@ -117,7 +116,6 @@
             limits: [10, 15, 20],
             url: ctx + '/module/getAllModule',
         });
-        </shiro:hasPermission>
 
         table.on('tool(moduleTable)', function (obj) {
             if (obj.event == 'del') {
