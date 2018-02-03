@@ -3,7 +3,10 @@ package com.aioute.controller;
 import com.aioute.service.ModuleService;
 import com.sft.model.Module;
 import com.sft.model.bean.ModuleBean;
-import com.sft.util.*;
+import com.sft.util.CloudError;
+import com.sft.util.PagingUtil;
+import com.sft.util.SendAppJSONUtil;
+import com.sft.util.SendPlatJSONUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -65,7 +68,7 @@ public class ModuleController {
      */
     @ResponseBody
     @RequestMapping("updateModule")
-    public String updateModule(String moduleId, String name, String remarks, String del_flag, String address, HttpServletRequest req, HttpServletResponse res) {
+    public String updateModule(String moduleId, String name, String remarks, String del_flag, String address, String is_redict, HttpServletRequest req, HttpServletResponse res) {
         Module module = new Module();
         if (StringUtils.hasText(moduleId)) {
             module.setId(moduleId);
@@ -80,6 +83,11 @@ public class ModuleController {
             }
             if (StringUtils.hasText(del_flag) && !del_flag.equals("0")) {
                 module.setDel_flag(1);
+            }
+            if (StringUtils.hasText(is_redict) && !is_redict.equals("0")) {
+                module.setIsDirect("1");
+            } else {
+                module.setIsDirect("0");
             }
             if (moduleService.updateModule(module)) {
                 return SendAppJSONUtil.getNormalString("更新成功!");

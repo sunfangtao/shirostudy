@@ -56,6 +56,7 @@ public class ModuleDaoImpl implements ModuleDao {
                 module.setCreate_date(rs.getString("create_date"));
                 module.setDel_flag(rs.getInt("del_flag"));
                 module.setId(rs.getString("id"));
+                module.setIsDirect(rs.getString("is_redict"));
                 module.setName(rs.getString("name"));
                 module.setRemarks(rs.getString("remarks"));
                 moduleList.add(module);
@@ -113,6 +114,9 @@ public class ModuleDaoImpl implements ModuleDao {
         }
         if (module.getAddress() != null) {
             sb.append(", address = '").append(module.getAddress()).append("'");
+        }
+        if (module.getIsDirect() != null) {
+            sb.append(", is_redict = '").append(module.getIsDirect()).append("'");
         }
         sb.append(" where id = ?");
 

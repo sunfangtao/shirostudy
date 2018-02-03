@@ -80,7 +80,8 @@ function editModule(obj) {
                             name: $("#name").val(),
                             address: $("#address").val(),
                             remarks: $("#remarks").val(),
-                            del_flag: $("#del_flag").prop('checked') ? 1 : 0
+                            del_flag: $("#del_flag").prop('checked') ? 1 : 0,
+                            isDirect: $("#is_redict").prop('checked') ? 1 : 0
                         });
                         layer.close(index);
                         layer.msg(data.data.info, {time: 800});
@@ -100,6 +101,10 @@ function editModule(obj) {
             $("#name").val(obj.data.name);
             if (obj.data.del_flag == 0) {
                 $("#del_flag").removeProp("checked");
+                layui.form.render('checkbox');
+            }
+            if (obj.data.isDirect == 0) {
+                $("#is_redict").removeProp("checked");
                 layui.form.render('checkbox');
             }
         }

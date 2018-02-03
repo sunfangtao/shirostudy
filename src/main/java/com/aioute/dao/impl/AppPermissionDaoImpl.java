@@ -152,26 +152,26 @@ public class AppPermissionDaoImpl implements AppPermissionDao {
         ResultSet rs = null;
         StringBuffer sb = new StringBuffer();
 
-        sb.append("select count(1) as count from app_permission");
+        sb.append("select count(1) as count from app_permission where 1 = 1");
         if (whereMap != null) {
             String is_user = whereMap.get("is_user");
             if ("0".equals(is_user) || "1".equals(is_user)) {
-                sb.append(" and a.is_user = ").append(is_user);
+                sb.append(" and is_user = ").append(is_user);
             }
 
             String url = whereMap.get("url");
             if (StringUtils.hasText(url)) {
-                sb.append(" and a.url like '%").append(url).append("%'");
+                sb.append(" and url like '%").append(url).append("%'");
             }
 
             String type = whereMap.get("type");
             if (StringUtils.hasText(type)) {
-                sb.append(" and a.type like '%").append(type).append("%'");
+                sb.append(" and type like '%").append(type).append("%'");
             }
 
             String moduleId = whereMap.get("moduleId");
             if (StringUtils.hasText(moduleId)) {
-                sb.append(" and a.server_id = '").append(moduleId).append("'");
+                sb.append(" and server_id = '").append(moduleId).append("'");
             }
         }
 

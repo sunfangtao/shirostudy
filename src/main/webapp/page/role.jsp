@@ -166,7 +166,7 @@
         });
     });
 
-</script>
+</script>26
 
 <script src="${ctx}/static/js/role.js" charset="utf-8"></script>
 </body>

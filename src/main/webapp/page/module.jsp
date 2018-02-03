@@ -56,6 +56,15 @@
         </div>
     </div>
 
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label">是否重定向</label>
+        <div class="layui-input-block">
+            <input id="is_redict" type="checkbox" checked="" name="is_redict" lay-skin="switch"
+                   lay-filter="switchModule"
+                   lay-text="是|否" value="1">
+        </div>
+    </div>
+
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
@@ -74,6 +83,14 @@
     <span style="color: #F581B1;">{{ '有效' }}</span>
     {{#  } else { }}
     {{ '无效' }}
+    {{#  } }}
+</script>
+
+<script type="text/html" id="directTpl">
+    {{#  if(d.isDirect == 0){ }}
+    <span style="color: #F581B1;">{{ '否' }}</span>
+    {{#  } else { }}
+    {{ '是' }}
     {{#  } }}
 </script>
 
@@ -101,6 +118,7 @@
                 {field: 'create_name', title: '创建者', width: 200, align: 'center'},
                 {field: 'create_date', title: '创建日期', width: 200, align: 'center', templet: '#dateTpl'},
                 {field: 'del_flag', title: '是否有效', width: 200, align: 'center', templet: '#validateTpl'},
+                {field: 'isDirect', title: '是否重定向', width: 200, align: 'center', templet: '#directTpl'},
                 {field: 'remarks', title: '备注', width: 400, align: 'center'},
                 <shiro:hasPermission name="module/updateModule">
                 {fixed: 'right', width: 200, align: 'center', toolbar: '#barTool'}
